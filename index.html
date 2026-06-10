@@ -5,277 +5,506 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phantdl — Universal Downloader</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#03090f;color:#d0eeff;font-family:sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-h1{font-size:2rem;color:#00b4ff;margin-bottom:8px;letter-spacing:2px;text-align:center}
-.sub{color:rgba(160,210,240,0.5);margin-bottom:30px;font-size:13px;text-align:center}
-.box{width:100%;max-width:620px;background:rgba(0,180,255,0.03);border:1px solid rgba(0,180,255,0.15);border-radius:14px;padding:24px}
-input{width:100%;padding:14px 16px;background:rgba(0,180,255,0.05);border:1px solid rgba(0,180,255,0.2);border-radius:10px;color:#d0eeff;font-size:15px;outline:none;margin-bottom:12px}
-input::placeholder{color:rgba(160,210,240,0.3)}
-.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,#00b4ff,#0070ff);border:none;border-radius:10px;color:white;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:1px}
-.btn-main:disabled{opacity:0.5;cursor:not-allowed}
-.result{margin-top:20px;display:none}
-.thumb{width:100%;border-radius:10px;margin-bottom:12px;max-height:220px;object-fit:cover}
-.title{font-size:14px;font-weight:600;margin-bottom:12px;color:#00f0ff;line-height:1.5}
-.formats{display:flex;flex-direction:column;gap:8px}
-.dl-btn{display:block;padding:13px 16px;background:rgba(0,180,255,0.06);border:1px solid rgba(0,180,255,0.2);border-radius:8px;color:#d0eeff;text-decoration:none;font-size:13px;text-align:center;cursor:pointer}
-.dl-btn:hover{background:rgba(0,180,255,0.15)}
-.error{color:#ff4466;margin-top:12px;font-size:13px;display:none;padding:12px;background:rgba(255,68,102,0.08);border:1px solid rgba(255,68,102,0.2);border-radius:8px}
-.loading{text-align:center;margin-top:12px;color:#00b4ff;display:none}
-.platform-tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:12px}
-.pt-yt{background:rgba(255,0,0,0.15);border:1px solid rgba(255,0,0,0.3);color:#ff4444}
-.pt-tk{background:rgba(0,242,234,0.1);border:1px solid rgba(0,242,234,0.3);color:#00f2ea}
-.pt-ig{background:rgba(225,48,108,0.1);border:1px solid rgba(225,48,108,0.3);color:#e1306c}
-.pt-fb{background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.3);color:#1877f2}
-.pt-tw{background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.3);color:#1da1f2}
-.pt-tb{background:rgba(0,180,255,0.1);border:1px solid rgba(0,180,255,0.3);color:#00b4ff}
-footer{margin-top:30px;color:rgba(160,210,240,0.2);font-size:11px;text-align:center;letter-spacing:1px}
-.supported{margin-top:20px;text-align:center;color:rgba(160,210,240,0.3);font-size:11px}
+html{scroll-behavior:smooth}
+body{
+  background:#03090f;
+  color:#d0eeff;
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* BG */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,180,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,255,0.03) 1px,transparent 1px);
+  background-size:44px 44px;
+  pointer-events:none;z-index:0;
+}
+
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0}
+.orb1{width:400px;height:400px;top:-150px;right:-100px;background:radial-gradient(circle,rgba(0,180,255,0.08),transparent 70%);animation:drift1 18s ease-in-out infinite}
+.orb2{width:350px;height:350px;bottom:-120px;left:-80px;background:radial-gradient(circle,rgba(124,58,237,0.08),transparent 70%);animation:drift2 22s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,-30px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,20px)}}
+
+/* SCAN */
+.scan{position:fixed;top:-2px;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#00b4ff,#00f0ff,transparent);z-index:2;pointer-events:none;animation:scan 8s linear infinite;opacity:0.5}
+@keyframes scan{0%{top:-2px}100%{top:100vh}}
+
+.wrap{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+
+/* HEADER */
+.logo{font-family:'Orbitron',monospace;font-size:clamp(28px,7vw,52px);font-weight:900;letter-spacing:4px;color:#00b4ff;text-shadow:0 0 40px rgba(0,180,255,0.5);animation:fadeUp 0.6s ease both;margin-bottom:8px}
+.logo span{color:#f59e0b}
+.tagline{font-size:12px;letter-spacing:3px;color:rgba(160,210,240,0.4);animation:fadeUp 0.6s 0.1s ease both;margin-bottom:40px;text-transform:uppercase}
+
+/* CARD */
+.card{
+  width:100%;max-width:580px;
+  background:rgba(0,180,255,0.03);
+  border:1px solid rgba(0,180,255,0.15);
+  border-radius:20px;
+  padding:28px;
+  animation:fadeUp 0.6s 0.2s ease both;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,#00b4ff,#00f0ff,transparent);
+  opacity:0.6;
+}
+
+/* INPUT ROW */
+.input-row{display:flex;gap:10px;margin-bottom:20px;position:relative}
+.url-input{
+  flex:1;padding:14px 16px;
+  background:rgba(0,180,255,0.05);
+  border:1px solid rgba(0,180,255,0.2);
+  border-radius:12px;color:#d0eeff;font-size:14px;outline:none;
+  transition:border 0.3s;font-family:'Inter',sans-serif;
+}
+.url-input:focus{border-color:rgba(0,180,255,0.5);box-shadow:0 0 20px rgba(0,180,255,0.1)}
+.url-input::placeholder{color:rgba(160,210,240,0.25)}
+.paste-btn{
+  padding:14px 18px;
+  background:rgba(0,180,255,0.1);
+  border:1px solid rgba(0,180,255,0.25);
+  border-radius:12px;color:#00b4ff;
+  font-size:13px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all 0.2s;
+  font-family:'Inter',sans-serif;
+}
+.paste-btn:hover{background:rgba(0,180,255,0.2);box-shadow:0 0 16px rgba(0,180,255,0.2)}
+.paste-btn:active{transform:scale(0.96)}
+
+/* FETCH BTN */
+.fetch-btn{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,#00b4ff,#0050ff);
+  border:none;border-radius:12px;
+  color:white;font-size:15px;font-weight:700;
+  cursor:pointer;letter-spacing:2px;
+  font-family:'Orbitron',monospace;
+  transition:all 0.3s;position:relative;overflow:hidden;
+}
+.fetch-btn::after{
+  content:'';position:absolute;top:-50%;left:-60%;
+  width:30%;height:200%;
+  background:rgba(255,255,255,0.15);
+  transform:skewX(-20deg);
+  animation:shine 3s infinite;
+}
+@keyframes shine{0%{left:-60%}100%{left:150%}}
+.fetch-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,100,255,0.4)}
+.fetch-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+/* LOADING */
+.loading{display:none;text-align:center;padding:24px 0}
+.loading-dots{display:flex;justify-content:center;gap:8px;margin-bottom:10px}
+.loading-dots span{
+  width:8px;height:8px;border-radius:50%;
+  background:#00b4ff;animation:bounce 1.2s infinite;
+}
+.loading-dots span:nth-child(2){animation-delay:0.2s}
+.loading-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:0.5}50%{transform:translateY(-8px);opacity:1}}
+.loading-text{font-size:13px;color:rgba(160,210,240,0.5);letter-spacing:1px}
+
+/* ERROR */
+.error-box{
+  display:none;margin-top:16px;padding:14px 16px;
+  background:rgba(255,68,102,0.08);
+  border:1px solid rgba(255,68,102,0.25);
+  border-radius:10px;color:#ff6688;font-size:13px;
+}
+
+/* RESULT */
+.result{display:none;margin-top:24px;animation:fadeUp 0.4s ease both}
+
+/* THUMBNAIL */
+.thumb-wrap{position:relative;margin-bottom:16px;border-radius:12px;overflow:hidden}
+.thumb{width:100%;max-height:200px;object-fit:cover;display:block;border-radius:12px}
+.platform-badge{
+  position:absolute;top:10px;left:10px;
+  padding:4px 12px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  backdrop-filter:blur(10px);
+}
+.pb-tk{background:rgba(0,242,234,0.2);border:1px solid rgba(0,242,234,0.4);color:#00f2ea}
+.pb-ig{background:rgba(225,48,108,0.2);border:1px solid rgba(225,48,108,0.4);color:#e1306c}
+.pb-yt{background:rgba(255,0,0,0.2);border:1px solid rgba(255,0,0,0.4);color:#ff4444}
+.pb-fb{background:rgba(24,119,242,0.2);border:1px solid rgba(24,119,242,0.4);color:#1877f2}
+.pb-tw{background:rgba(29,161,242,0.2);border:1px solid rgba(29,161,242,0.4);color:#1da1f2}
+.pb-other{background:rgba(0,180,255,0.2);border:1px solid rgba(0,180,255,0.4);color:#00b4ff}
+
+.media-title{
+  font-size:13px;font-weight:500;
+  color:rgba(160,210,240,0.8);
+  margin-bottom:20px;line-height:1.6;
+  padding:0 2px;
+}
+
+/* DOWNLOAD BUTTONS */
+.dl-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.dl-card{
+  border-radius:14px;padding:18px 14px;
+  text-align:center;cursor:pointer;
+  transition:all 0.3s;position:relative;overflow:hidden;
+  border:none;font-family:'Inter',sans-serif;
+}
+.dl-card:hover{transform:translateY(-3px)}
+.dl-card:active{transform:scale(0.97)}
+
+.dl-normal{
+  background:rgba(0,180,255,0.08);
+  border:1px solid rgba(0,180,255,0.2);
+}
+.dl-normal:hover{background:rgba(0,180,255,0.15);box-shadow:0 8px 24px rgba(0,180,255,0.15)}
+
+.dl-hd{
+  background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(239,68,68,0.1));
+  border:1px solid rgba(245,158,11,0.3);
+}
+.dl-hd:hover{box-shadow:0 8px 24px rgba(245,158,11,0.2)}
+
+.dl-icon{font-size:24px;margin-bottom:8px;display:block}
+.dl-label{
+  font-size:13px;font-weight:700;letter-spacing:1px;
+  display:block;margin-bottom:4px;
+}
+.dl-normal .dl-label{color:#00b4ff}
+.dl-hd .dl-label{color:#f59e0b}
+.dl-sub{font-size:10px;color:rgba(160,210,240,0.4);display:block;letter-spacing:0.5px}
+.dl-hd .dl-sub{color:rgba(245,158,11,0.5)}
+
+.ad-badge{
+  position:absolute;top:8px;right:8px;
+  background:rgba(245,158,11,0.2);
+  border:1px solid rgba(245,158,11,0.4);
+  color:#f59e0b;font-size:8px;font-weight:700;
+  padding:2px 6px;border-radius:10px;letter-spacing:1px;
+}
+
+/* PHOTO GRID */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:12px}
+.photo-item{
+  aspect-ratio:1;border-radius:8px;overflow:hidden;
+  position:relative;cursor:pointer;
+  border:1px solid rgba(0,180,255,0.15);
+}
+.photo-item img{width:100%;height:100%;object-fit:cover}
+.photo-item .dl-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.2s;font-size:20px;
+}
+.photo-item:hover .dl-overlay{opacity:1}
+
+/* SUPPORTED */
+.supported{
+  margin-top:24px;text-align:center;
+  color:rgba(160,210,240,0.2);font-size:10px;
+  letter-spacing:1px;animation:fadeUp 0.6s 0.4s ease both;
+}
+.supported span{color:rgba(160,210,240,0.35)}
+
+/* AD MODAL */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);z-index:100;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+}
+.modal-bg.show{display:flex;animation:fadeIn 0.3s ease}
+.modal{
+  background:#070f1a;border:1px solid rgba(0,180,255,0.2);
+  border-radius:20px;padding:28px;max-width:340px;width:90%;
+  text-align:center;position:relative;
+}
+.modal h3{font-family:'Orbitron',monospace;color:#00b4ff;font-size:16px;margin-bottom:8px}
+.modal p{color:rgba(160,210,240,0.5);font-size:13px;margin-bottom:20px;line-height:1.6}
+.timer-bar{height:3px;background:rgba(0,180,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:20px}
+.timer-fill{height:100%;background:linear-gradient(90deg,#00b4ff,#f59e0b);width:0%;transition:width 0.1s linear}
+.modal-btns{display:flex;gap:10px}
+.modal-cancel{flex:1;padding:12px;background:rgba(255,68,102,0.1);border:1px solid rgba(255,68,102,0.2);border-radius:10px;color:#ff6688;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif}
+.modal-dl{flex:2;padding:12px;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;border-radius:10px;color:white;font-weight:700;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;opacity:0.4;pointer-events:none;transition:opacity 0.3s}
+.modal-dl.ready{opacity:1;pointer-events:all}
+
+footer{margin-top:24px;color:rgba(160,210,240,0.15);font-size:10px;letter-spacing:2px;text-align:center;animation:fadeUp 0.6s 0.5s ease both}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
-<h1>PHANTDL</h1>
-<p class="sub">Universal Downloader — No Watermark — Max Quality</p>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="scan"></div>
 
-<div class="box">
-  <input type="text" id="urlInput" placeholder="Paste link... TikTok, Instagram, YouTube, Facebook, Twitter...">
-  <button class="btn-main" id="btn" onclick="fetchInfo()">⬇ FETCH & DOWNLOAD</button>
-  <div class="loading" id="loading">⏳ Processing...</div>
-  <div class="error" id="error"></div>
-  <div class="result" id="result">
-    <div id="ptag"></div>
-    <img class="thumb" id="thumb" src="" alt="" onerror="this.style.display='none'">
-    <div class="title" id="ttitle"></div>
-    <div class="formats" id="formats"></div>
+<div class="wrap">
+  <div class="logo">⚡ PHANT<span>DL</span></div>
+  <div class="tagline">Universal · No Watermark · Max Quality</div>
+
+  <div class="card">
+    <div class="input-row">
+      <input class="url-input" id="urlInput" type="text" placeholder="Paste your link here...">
+      <button class="paste-btn" onclick="pasteLink()">📋 Paste</button>
+    </div>
+    <button class="fetch-btn" id="fetchBtn" onclick="fetchInfo()">FETCH & DOWNLOAD</button>
+
+    <div class="loading" id="loading">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <div class="loading-text">FETCHING INFO...</div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="result" id="result">
+      <div class="thumb-wrap">
+        <img class="thumb" id="thumb" src="" alt="" onerror="this.parentElement.style.display='none'">
+        <div class="platform-badge" id="pbadge"></div>
+      </div>
+      <div class="media-title" id="mtitle"></div>
+
+      <div class="dl-row" id="dlRow">
+        <button class="dl-card dl-normal" id="btnNormal" onclick="downloadNormal()">
+          <span class="dl-icon">⬇️</span>
+          <span class="dl-label">NORMAL</span>
+          <span class="dl-sub">No Watermark · Free</span>
+        </button>
+        <button class="dl-card dl-hd" id="btnHD" onclick="showAdModal()">
+          <div class="ad-badge">1 AD</div>
+          <span class="dl-icon">🎬</span>
+          <span class="dl-label">HD QUALITY</span>
+          <span class="dl-sub">No Watermark · Watch 1 Ad</span>
+        </button>
+      </div>
+
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+  </div>
+
+  <div class="supported">
+    Supports: <span>TikTok · Instagram · Facebook · YouTube · Twitter · Pinterest</span> · and 100+ more
+  </div>
+
+  <footer>PHANTDL v3.0 · PHANTOMS WEB</footer>
+</div>
+
+<!-- AD MODAL -->
+<div class="modal-bg" id="adModal">
+  <div class="modal">
+    <h3>⚡ HD Download</h3>
+    <p>Watch a short ad to unlock HD quality download without watermark.</p>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-dl" id="modalDlBtn" onclick="downloadHD()">Download HD ⬇</button>
+    </div>
   </div>
 </div>
 
-<div class="supported">
-  Supports: TikTok · Instagram · Facebook · YouTube · Twitter · Pinterest · and 100+ more
-</div>
-
-<footer>PHANTDL v3.0 · PHANTOMS WEB</footer>
-
 <script>
-function show(id){document.getElementById(id).style.display='block'}
-function hide(id){document.getElementById(id).style.display='none'}
-function setError(msg){document.getElementById('error').textContent='❌ '+msg;show('error')}
+let currentData = null;
+let hdUrl = null;
+let normalUrl = null;
+let adTimer = null;
+
+// PASTE
+async function pasteLink(){
+  try{
+    const text = await navigator.clipboard.readText();
+    document.getElementById('urlInput').value = text;
+    document.getElementById('urlInput').focus();
+  } catch(e){
+    document.getElementById('urlInput').focus();
+    document.execCommand('paste');
+  }
+}
 
 function detectPlatform(url){
-  if(url.includes('tiktok.com')) return {name:'TIKTOK',cls:'pt-tk'};
-  if(url.includes('instagram.com')) return {name:'INSTAGRAM',cls:'pt-ig'};
-  if(url.includes('youtube.com')||url.includes('youtu.be')) return {name:'YOUTUBE',cls:'pt-yt'};
-  if(url.includes('facebook.com')||url.includes('fb.watch')) return {name:'FACEBOOK',cls:'pt-fb'};
-  if(url.includes('twitter.com')||url.includes('x.com')) return {name:'TWITTER/X',cls:'pt-tw'};
-  if(url.includes('terabox.com')||url.includes('teraboxapp.com')) return {name:'TERABOX',cls:'pt-tb'};
-  return {name:'UNIVERSAL',cls:'pt-tb'};
+  if(url.includes('tiktok.com')) return {name:'TIKTOK',cls:'pb-tk'};
+  if(url.includes('instagram.com')) return {name:'INSTAGRAM',cls:'pb-ig'};
+  if(url.includes('youtube.com')||url.includes('youtu.be')) return {name:'YOUTUBE',cls:'pb-yt'};
+  if(url.includes('facebook.com')||url.includes('fb.watch')) return {name:'FACEBOOK',cls:'pb-fb'};
+  if(url.includes('twitter.com')||url.includes('x.com')) return {name:'TWITTER/X',cls:'pb-tw'};
+  return {name:'UNIVERSAL',cls:'pb-other'};
 }
 
-function addDownloadBtn(label, href, download){
-  const a = document.createElement('a');
-  a.className = 'dl-btn';
-  a.textContent = '⬇ ' + label;
-  a.href = href;
-  a.target = '_blank';
-  if(download) a.download = download;
-  document.getElementById('formats').appendChild(a);
-}
+function show(id){document.getElementById(id).style.display='block'}
+function hide(id){document.getElementById(id).style.display='none'}
+function showFlex(id){document.getElementById(id).style.display='flex'}
 
 async function fetchInfo(){
   const url = document.getElementById('urlInput').value.trim();
-  if(!url) return alert('Please paste a link!');
+  if(!url){document.getElementById('urlInput').focus();return;}
 
-  document.getElementById('btn').disabled = true;
-  show('loading');
-  hide('error');
+  document.getElementById('fetchBtn').disabled = true;
+  showFlex('loading'); // fix: use flex for loading dots
+  document.getElementById('loading').style.display='block';
+  hide('errorBox');
   hide('result');
-  document.getElementById('formats').innerHTML = '';
+  document.getElementById('photoGrid').innerHTML='';
+  currentData=null; hdUrl=null; normalUrl=null;
 
   const p = detectPlatform(url);
-  document.getElementById('ptag').innerHTML = `<span class="platform-tag ${p.cls}">${p.name}</span>`;
+  document.getElementById('pbadge').className='platform-badge '+p.cls;
+  document.getElementById('pbadge').textContent=p.name;
 
-  try {
-    // TikTok — tikwm API (watermark free)
-    if(url.includes('tiktok.com')){
-      await fetchTikTok(url);
-    }
-    // Instagram
-    else if(url.includes('instagram.com')){
-      await fetchInstagram(url);
-    }
-    // Facebook
-    else if(url.includes('facebook.com')||url.includes('fb.watch')){
-      await fetchFacebook(url);
-    }
-    // Twitter/X
-    else if(url.includes('twitter.com')||url.includes('x.com')){
-      await fetchTwitter(url);
-    }
-    // YouTube
-    else if(url.includes('youtube.com')||url.includes('youtu.be')){
-      await fetchYouTube(url);
-    }
-    // Terabox
-    else if(url.includes('terabox.com')||url.includes('teraboxapp.com')){
-      await fetchTerabox(url);
-    }
-    // Universal fallback
-    else {
-      await fetchUniversal(url);
-    }
-  } catch(e){
-    setError('Failed: ' + e.message);
+  try{
+    if(url.includes('tiktok.com')) await fetchTikTok(url);
+    else if(url.includes('instagram.com')) await fetchInstagram(url);
+    else await fetchUniversal(url);
+  }catch(e){
+    showError('Failed: '+e.message);
   }
 
   hide('loading');
-  document.getElementById('btn').disabled = false;
+  document.getElementById('fetchBtn').disabled=false;
 }
 
-// ═══ TIKTOK (tikwm.com - watermark free) ═══
 async function fetchTikTok(url){
-  const res = await fetch('https://www.tikwm.com/api/', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: 'url='+encodeURIComponent(url)+'&hd=1'
+  const res = await fetch('https://www.tikwm.com/api/',{
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'url='+encodeURIComponent(url)+'&hd=1'
   });
   const data = await res.json();
-  if(data.code === 0 && data.data){
+  if(data.code===0 && data.data){
     const d = data.data;
-    document.getElementById('thumb').src = d.cover || '';
-    document.getElementById('ttitle').textContent = d.title || 'TikTok Video';
-    
-    if(d.hdplay) addDownloadBtn('Download HD (No Watermark)', d.hdplay, 'tiktok_hd.mp4');
-    if(d.play) addDownloadBtn('Download SD (No Watermark)', d.play, 'tiktok_sd.mp4');
-    if(d.wmplay) addDownloadBtn('Download With Watermark', d.wmplay, 'tiktok_wm.mp4');
-    
+    setThumb(d.cover);
+    setTitle(d.title||'TikTok Video');
+    normalUrl = d.play || d.wmplay;
+    hdUrl = d.hdplay || d.play;
+
     // Photos
-    if(d.images && d.images.length > 0){
-      d.images.forEach((img, i) => {
-        addDownloadBtn(`Download Photo ${i+1}`, img, `tiktok_photo_${i+1}.jpg`);
+    if(d.images && d.images.length>0){
+      hide('dlRow');
+      const grid = document.getElementById('photoGrid');
+      d.images.forEach((img,i)=>{
+        const div = document.createElement('div');
+        div.className='photo-item';
+        div.innerHTML=`<img src="${img}"><div class="dl-overlay" onclick="dlPhoto('${img}',${i+1})">⬇️</div>`;
+        grid.appendChild(div);
       });
-    }
-    show('result');
-  } else {
-    setError('TikTok fetch failed. Try another link.');
-  }
-}
-
-// ═══ INSTAGRAM ═══
-async function fetchInstagram(url){
-  const api = `https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`;
-  const res = await fetch(api);
-  const data = await res.json();
-  
-  if(data.medias && data.medias.length > 0){
-    document.getElementById('thumb').src = data.thumbnail || '';
-    document.getElementById('ttitle').textContent = data.title || 'Instagram Media';
-    
-    data.medias.forEach((m, i) => {
-      const label = m.type === 'video' 
-        ? `Download Video ${i+1} (${m.quality || 'HD'})` 
-        : `Download Photo ${i+1}`;
-      addDownloadBtn(label, m.url, `instagram_${i+1}.${m.extension || 'mp4'}`);
-    });
-    show('result');
-  } else {
-    setError('Instagram fetch failed. Make sure the post is public.');
-  }
-}
-
-// ═══ FACEBOOK ═══
-async function fetchFacebook(url){
-  const api = `https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`;
-  const res = await fetch(api);
-  const data = await res.json();
-  
-  if(data.medias && data.medias.length > 0){
-    document.getElementById('thumb').src = data.thumbnail || '';
-    document.getElementById('ttitle').textContent = data.title || 'Facebook Video';
-    data.medias.forEach((m, i) => {
-      addDownloadBtn(`Download ${m.quality || 'HD'} (${m.extension || 'mp4'})`, m.url, `facebook_${i+1}.mp4`);
-    });
-    show('result');
-  } else {
-    setError('Facebook fetch failed. Make sure the video is public.');
-  }
-}
-
-// ═══ TWITTER/X ═══
-async function fetchTwitter(url){
-  const api = `https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`;
-  const res = await fetch(api);
-  const data = await res.json();
-  
-  if(data.medias && data.medias.length > 0){
-    document.getElementById('thumb').src = data.thumbnail || '';
-    document.getElementById('ttitle').textContent = data.title || 'Twitter/X Media';
-    data.medias.forEach((m, i) => {
-      addDownloadBtn(`Download ${m.quality || 'HD'}`, m.url, `twitter_${i+1}.mp4`);
-    });
-    show('result');
-  } else {
-    setError('Twitter fetch failed.');
-  }
-}
-
-// ═══ YOUTUBE ═══
-async function fetchYouTube(url){
-  const api = `https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`;
-  const res = await fetch(api);
-  const data = await res.json();
-  
-  if(data.medias && data.medias.length > 0){
-    document.getElementById('thumb').src = data.thumbnail || '';
-    document.getElementById('ttitle').textContent = data.title || 'YouTube Video';
-    data.medias.forEach((m, i) => {
-      addDownloadBtn(`Download ${m.quality || 'HD'} (${m.extension || 'mp4'})`, m.url, `youtube_${i+1}.mp4`);
-    });
-    show('result');
-  } else {
-    setError('YouTube fetch failed. Try a short/public video.');
-  }
-}
-
-// ═══ TERABOX ═══
-async function fetchTerabox(url){
-  const api = `https://teraboxapp.com/api/shorturlinfo?shorturl=${encodeURIComponent(url)}`;
-  try {
-    const res = await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
-    if(data.medias && data.medias.length > 0){
-      document.getElementById('ttitle').textContent = data.title || 'Terabox File';
-      data.medias.forEach((m,i) => {
-        addDownloadBtn(`Download File ${i+1}`, m.url, `terabox_${i+1}`);
-      });
-      show('result');
     } else {
-      setError('Terabox fetch failed.');
+      show('dlRow');
     }
-  } catch(e){
-    setError('Terabox fetch failed: ' + e.message);
-  }
-}
-
-// ═══ UNIVERSAL FALLBACK ═══
-async function fetchUniversal(url){
-  const api = `https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`;
-  const res = await fetch(api);
-  const data = await res.json();
-  
-  if(data.medias && data.medias.length > 0){
-    document.getElementById('thumb').src = data.thumbnail || '';
-    document.getElementById('ttitle').textContent = data.title || 'Media';
-    data.medias.forEach((m,i) => {
-      addDownloadBtn(`Download ${m.quality || 'HD'}`, m.url, `phantdl_${i+1}.${m.extension||'mp4'}`);
-    });
     show('result');
   } else {
-    setError('Could not fetch this link. Try another platform.');
+    showError('TikTok fetch failed. Try another link.');
   }
 }
 
-document.getElementById('urlInput').addEventListener('keypress', e => {
-  if(e.key === 'Enter') fetchInfo();
+async function fetchInstagram(url){
+  const res = await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+  const data = await res.json();
+  if(data.medias && data.medias.length>0){
+    setThumb(data.thumbnail||'');
+    setTitle(data.title||'Instagram Media');
+    const vids = data.medias.filter(m=>m.type==='video');
+    const imgs = data.medias.filter(m=>m.type!=='video');
+    if(vids.length>0){
+      normalUrl = vids[vids.length-1].url;
+      hdUrl = vids[0].url;
+      show('dlRow');
+    }
+    if(imgs.length>0){
+      const grid = document.getElementById('photoGrid');
+      imgs.forEach((m,i)=>{
+        const div = document.createElement('div');
+        div.className='photo-item';
+        div.innerHTML=`<img src="${m.url}"><div class="dl-overlay" onclick="dlPhoto('${m.url}',${i+1})">⬇️</div>`;
+        grid.appendChild(div);
+      });
+    }
+    show('result');
+  } else {
+    showError('Instagram fetch failed. Make sure post is public.');
+  }
+}
+
+async function fetchUniversal(url){
+  const res = await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+  const data = await res.json();
+  if(data.medias && data.medias.length>0){
+    setThumb(data.thumbnail||'');
+    setTitle(data.title||'Media');
+    normalUrl = data.medias[data.medias.length-1].url;
+    hdUrl = data.medias[0].url;
+    show('dlRow');
+    show('result');
+  } else {
+    showError('Could not fetch this link.');
+  }
+}
+
+function setThumb(src){
+  const t=document.getElementById('thumb');
+  if(src){t.src=src;t.parentElement.style.display='block';}
+  else{t.parentElement.style.display='none';}
+}
+function setTitle(txt){document.getElementById('mtitle').textContent=txt}
+function showError(msg){
+  const e=document.getElementById('errorBox');
+  e.textContent='❌ '+msg;show('errorBox');
+}
+
+function downloadNormal(){
+  if(!normalUrl) return;
+  const a=document.createElement('a');
+  a.href=normalUrl;a.target='_blank';
+  a.download='phantdl_normal.mp4';
+  a.click();
+}
+
+// AD MODAL
+function showAdModal(){
+  if(!hdUrl) return;
+  document.getElementById('adModal').classList.add('show');
+  document.getElementById('modalDlBtn').classList.remove('ready');
+  document.getElementById('timerFill').style.width='0%';
+  let t=0;
+  adTimer=setInterval(()=>{
+    t+=100;
+    const pct=(t/5000)*100;
+    document.getElementById('timerFill').style.width=pct+'%';
+    if(t>=5000){
+      clearInterval(adTimer);
+      document.getElementById('modalDlBtn').classList.add('ready');
+    }
+  },100);
+}
+
+function closeModal(){
+  document.getElementById('adModal').classList.remove('show');
+  if(adTimer) clearInterval(adTimer);
+}
+
+function downloadHD(){
+  if(!hdUrl) return;
+  closeModal();
+  const a=document.createElement('a');
+  a.href=hdUrl;a.target='_blank';
+  a.download='phantdl_hd.mp4';
+  a.click();
+}
+
+function dlPhoto(url,i){
+  const a=document.createElement('a');
+  a.href=url;a.target='_blank';
+  a.download=`phantdl_photo_${i}.jpg`;
+  a.click();
+}
+
+document.getElementById('urlInput').addEventListener('keypress',e=>{
+  if(e.key==='Enter') fetchInfo();
 });
 </script>
 </body>
