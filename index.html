@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phantdl — Universal Downloader</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#03090f;color:#d0eeff;font-family:sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+h1{font-size:2rem;color:#00b4ff;margin-bottom:8px;letter-spacing:2px}
+p{color:rgba(160,210,240,0.5);margin-bottom:30px;font-size:14px}
+.box{width:100%;max-width:600px;background:rgba(0,180,255,0.03);border:1px solid rgba(0,180,255,0.15);border-radius:14px;padding:24px}
+input{width:100%;padding:14px 16px;background:rgba(0,180,255,0.05);border:1px solid rgba(0,180,255,0.2);border-radius:10px;color:#d0eeff;font-size:15px;outline:none;margin-bottom:12px}
+input::placeholder{color:rgba(160,210,240,0.3)}
+button{width:100%;padding:14px;background:linear-gradient(135deg,#00b4ff,#0070ff);border:none;border-radius:10px;color:white;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:1px}
+button:disabled{opacity:0.5;cursor:not-allowed}
+.result{margin-top:20px;display:none}
+.thumb{width:100%;border-radius:10px;margin-bottom:12px}
+.title{font-size:15px;font-weight:600;margin-bottom:12px;color:#00f0ff}
+.formats{display:flex;flex-direction:column;gap:8px}
+.fmt-btn{padding:12px;background:rgba(0,180,255,0.08);border:1px solid rgba(0,180,255,0.2);border-radius:8px;color:#d0eeff;text-decoration:none;text-align:center;font-size:13px}
+.fmt-btn:hover{background:rgba(0,180,255,0.15)}
+.error{color:#ff4466;margin-top:12px;font-size:14px;display:none}
+.loading{text-align:center;margin-top:12px;color:#00b4ff;display:none}
+</style>
+</head>
+<body>
+<h1>⚡ PHANTDL</h1>
+<p>Universal Link Downloader — No Watermark</p>
+<div class="box">
+  <input type="text" id="urlInput" placeholder="Paste your link here... (TikTok, Instagram, YouTube, FB...)">
+  <button id="btn" onclick="fetchInfo()">DOWNLOAD</button>
+  <div class="loading" id="loading">⏳ Fetching info...</div>
+  <div class="error" id="error"></div>
+  <div class="result" id="result">
+    <img class="thumb" id="thumb" src="" alt="">
+    <div class="title" id="titleText"></div>
+    <div class="formats" id="formats"></div>
+  </div>
+</div>
+
+<script>
+const BACKEND = "https://phantoms-web-phantdl-backend.hf.space";
+
+async function fetchInfo() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) return;
+
+  document.getElementById('btn').disabled = true;
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+
+  try {
+    const res = await fetch(BACKEND + '/get-info', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({url})
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('thumb').src = data.thumbnail;
+      document.getElementById('titleText').textContent = data.title;
+      
+      const fmts = document.getElementById('formats');
+      fmts.innerHTML = '';
+      data.formats.forEach(f => {
+        const a = document.createElement('a');
+        a.href = f.url;
+        a.target = '_blank';
+        a.className = 'fmt-btn';
+        a.textContent = `⬇ Download ${f.quality || 'HD'} — ${f.ext.toUpperCase()}`;
+        fmts.appendChild(a);
+      });
+
+      document.getElementById('result').style.display = 'block';
+    } else {
+      document.getElementById('error').textContent = '❌ Error: ' + data.error;
+      document.getElementById('error').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('error').textContent = '❌ Backend connection failed!';
+    document.getElementById('error').style.display = 'block';
+  }
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('btn').disabled = false;
+}
+</script>
+</body>
+</html>
