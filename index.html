@@ -579,32 +579,39 @@
         async function executePenWrite() {
             const pen = document.getElementById('livePen');
             const input = document.getElementById('urlInput');
-            
-            input.value = '';
-            pen.classList.remove('writing');
-            void pen.offsetWidth; 
-            
-            let targetText = "https://vt.tiktok.com/ZSQU85mU6/";
+
+            // Get clipboard
+            let targetText = '';
             try {
                 const clipboardData = await navigator.clipboard.readText();
-                if(clipboardData && clipboardData.startsWith('http')) {
-                    targetText = clipboardData;
+                if(clipboardData && clipboardData.trim().startsWith('http')) {
+                    targetText = clipboardData.trim();
+                } else {
+                    setSystemFault('No valid link in clipboard. Copy a link first!');
+                    return;
                 }
-            } catch (err) {}
+            } catch (err) {
+                input.focus();
+                setSystemFault('Clipboard permission denied. Long press the input box and paste manually.');
+                return;
+            }
+
+            input.value = '';
+            hide('error');
+            pen.classList.remove('writing');
+            void pen.offsetWidth;
 
             const premiumColors = ['#00f2ea', '#ff007f', '#ff9f1c', '#00ff66', '#b500ff'];
             const randomColor = premiumColors[Math.floor(Math.random() * premiumColors.length)];
             pen.style.setProperty('--pen-start-color', randomColor);
-            
             pen.classList.add('writing');
 
-            const startDelay = 140; 
-            const activeDuration = 1260; 
+            const startDelay = 140;
+            const activeDuration = 1260;
             const totalChars = targetText.length;
             const msPerChar = activeDuration / totalChars;
-
             let currentCharIndex = 0;
-            
+
             setTimeout(() => {
                 const typingInterval = setInterval(() => {
                     if (currentCharIndex < totalChars) {
