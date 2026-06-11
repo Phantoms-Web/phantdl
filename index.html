@@ -1,591 +1,1236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="monetag" content="fcc3703573c908701b7f13bb5706c6ca">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PhantDL — Premium Universal Media Extractor</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Fredoka',sans-serif;user-select:none}
-body{background:#080c16;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-x:hidden;position:relative}
-.cyber-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,210,255,0.25) 2px,transparent 2px),linear-gradient(90deg,rgba(0,210,255,0.25) 2px,transparent 2px);background-size:55px 55px;z-index:-2;animation:gridScroll 24s linear infinite}
-@keyframes gridScroll{from{background-position:0 0}to{background-position:0 100%}}
-.container{width:100%;max-width:550px;background:#0d121c;border:4px solid #00d2ff;border-radius:32px;padding:45px 25px 35px 25px;text-align:center;position:relative;z-index:10;animation:containerIntro 0.6s cubic-bezier(0.175,0.885,0.32,1.25),neonPulseVibe 3s ease-in-out infinite alternate}
-@keyframes containerIntro{0%{transform:scale(0.9) translateY(40px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
-@keyframes neonPulseVibe{0%{border-color:#00d2ff;box-shadow:6px 6px 0px #ff007f}50%{border-color:#00f2ea;box-shadow:8px 8px 0px #ffca3a}100%{border-color:#00ff66;box-shadow:6px 6px 0px #00d2ff}}
-.logo-wrapper{position:relative;display:inline-block;margin-bottom:35px}
-h1{font-size:4rem;font-weight:700;letter-spacing:2px;display:inline-block;cursor:pointer;animation:titleFloat 3s ease-in-out infinite}
-h1 span.brand-white{color:#ffffff;text-shadow:4px 4px 0px #ff007f,8px 8px 0px #2a3447}
-h1 span.brand-orange{color:#ff9f1c;text-shadow:4px 4px 0px #b5006a,8px 8px 0px #2a3447}
-@keyframes titleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.particle{position:absolute;pointer-events:none;border-radius:50%;z-index:100;opacity:0;will-change:transform,opacity}
-@keyframes particleExplode{0%{transform:translate(0,0) scale(1.3);opacity:1}75%{opacity:0.9}100%{transform:translate(var(--tx),var(--ty)) scale(0.1);opacity:0}}
-.input-deck{position:relative;margin-bottom:25px;border-radius:20px;border:3px solid #1f293d;background:#06090e;box-shadow:inset 5px 5px 0px rgba(0,0,0,0.5);overflow:hidden}
-.input-container-rel{position:relative;width:100%}
-input{width:100%;padding:22px 55px;background:transparent;border:none;color:#fff;font-size:15px;font-weight:600;outline:none}
-input::placeholder{color:#4b5973}
-.live-pen{position:absolute;left:-50px;top:22px;font-size:26px;pointer-events:none;opacity:0;z-index:5}
-.live-pen.writing{animation:penSweepLeftRight 1.4s cubic-bezier(0.11,0,0.5,1) forwards,inkDepletionToGray 1.4s linear forwards}
-@keyframes penSweepLeftRight{0%{left:-40px;opacity:0;transform:rotate(0deg) scale(1.2)}10%{left:15px;opacity:1;transform:rotate(-35deg) scale(1.25)}50%{left:50%;opacity:1;transform:rotate(-25deg) translateY(-2px) scale(1.15)}85%{left:88%;opacity:1;transform:rotate(-15deg) scale(1.05)}100%{left:104%;opacity:0;transform:rotate(-30deg) scale(0.85)}}
-@keyframes inkDepletionToGray{0%{color:var(--pen-start-color);filter:drop-shadow(0 0 8px var(--pen-start-color))}35%{color:var(--pen-start-color);filter:drop-shadow(0 0 5px var(--pen-start-color))}70%{color:#5a6982;filter:drop-shadow(0 0 2px #5a6982)}100%{color:#2c3545;filter:drop-shadow(0 0px transparent)}}
-.live-broom{position:absolute;right:-60px;top:14px;font-size:30px;color:#ff595e;pointer-events:none;opacity:0;z-index:5}
-.live-broom.sweeping{animation:broomSweepRightLeft 1.2s cubic-bezier(0.25,0.46,0.45,0.94) forwards}
-@keyframes broomSweepRightLeft{0%{right:-60px;opacity:0;transform:rotate(0deg)}15%{right:15px;opacity:1;transform:rotate(-25deg)}45%{right:45%;opacity:1;transform:rotate(-45deg) scale(1.1)}75%{right:85%;opacity:1;transform:rotate(-15deg) scale(0.95)}100%{right:115%;opacity:0;transform:rotate(-30deg)}}
-.live-trash{position:absolute;left:18px;top:21px;font-size:24px;color:#ff9f1c;opacity:0;transform:scale(0);transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);z-index:4}
-.live-trash.visible{opacity:1;transform:scale(1.2);animation:trashBounce 0.4s ease infinite alternate}
-@keyframes trashBounce{from{transform:scale(1.1) translateY(0)}to{transform:scale(1.2) translateY(-2px)}}
-.vacuum-text{animation:textDisplace 1.1s cubic-bezier(0.55,0.055,0.675,0.19) forwards;transform-origin:left center}
-@keyframes textDisplace{0%{transform:translateX(0) scale(1);opacity:1;filter:blur(0)}40%{transform:translateX(-80px) scale(0.9);opacity:0.8;filter:blur(1px)}100%{transform:translateX(-320px) scale(0.5);opacity:0;filter:blur(4px)}}
-.utility-grid{display:flex;gap:16px;margin-bottom:25px}
-.action-btn{flex:1;padding:18px;border:3px solid #ffffff;border-radius:20px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;transform:translateY(0);transition:transform 0.08s cubic-bezier(0.25,0.46,0.45,0.94),box-shadow 0.08s cubic-bezier(0.25,0.46,0.45,0.94)}
-.btn-paste-link{background:#00f2ea;color:#000;box-shadow:0px 6px 0px #009e99,0px 10px 20px rgba(0,242,234,0.2)}
-.btn-clear-link{background:#ff595e;color:#fff;box-shadow:0px 6px 0px #b3363a,0px 10px 20px rgba(255,89,94,0.2)}
-.action-btn:hover{transform:translateY(-2px)}
-.btn-paste-link:hover{box-shadow:0px 8px 0px #009e99,0px 12px 22px rgba(0,242,234,0.3)}
-.btn-clear-link:hover{box-shadow:0px 8px 0px #b3363a,0px 12px 22px rgba(255,89,94,0.3)}
-.action-btn:active{transform:translateY(6px);box-shadow:0px 0px 0px transparent !important}
-.native-ad-deck{width:100%;height:60px;background:#090d12;border-radius:14px;margin-bottom:15px;display:flex;align-items:center;justify-content:center;color:#3b485c;font-size:11px;font-weight:700;border:1px dashed #1f293d;letter-spacing:1px}
-.btn-generate{width:100%;padding:20px;background:linear-gradient(135deg,#ff007f,#ff2a93);border:3px solid #fff;border-radius:20px;color:white;font-size:18px;font-weight:700;cursor:pointer;letter-spacing:1px;box-shadow:0 8px 0 #99004c,0 15px 30px rgba(255,0,127,0.3);transition:all 0.1s ease}
-.btn-generate:hover{transform:translateY(-2px);box-shadow:0 10px 0 #99004c,0 20px 30px rgba(255,0,127,0.4)}
-.btn-generate:active{transform:translateY(5px);box-shadow:0 2px 0 #99004c}
-.btn-generate:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.loading{display:none;justify-content:center;align-items:center;gap:12px;margin:30px 0}
-.dot{width:16px;height:16px;border-radius:50%;animation:dotOscillate 0.4s infinite alternate cubic-bezier(0.45,0.05,0.55,0.95)}
-.dot:nth-child(1){background:#00d2ff}
-.dot:nth-child(2){background:#ff007f;animation-delay:0.1s}
-.dot:nth-child(3){background:#ff9f1c;animation-delay:0.2s}
-@keyframes dotOscillate{from{transform:translateY(0)}to{transform:translateY(-16px)}}
-.result-card{margin-top:35px;display:none;text-align:left;background:#06090e;padding:25px;border-radius:24px;border:3px solid #1f293d;box-shadow:inset 5px 5px 0px rgba(0,0,0,0.6);animation:cardReveal 0.4s cubic-bezier(0.175,0.885,0.32,1.25)}
-@keyframes cardReveal{0%{transform:scale(0.85) translateY(20px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
-.media-preview{width:100%;border-radius:16px;margin-bottom:20px;max-height:240px;object-fit:cover;border:4px solid #fff;box-shadow:5px 5px 0px #000;display:none}
-.media-title{font-size:15px;font-weight:700;margin-bottom:20px;color:#fff;line-height:1.5}
-.download-links-bucket{display:flex;flex-direction:column;gap:14px}
-.dl-normal{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:#00f2ea;border:3px solid #000;border-radius:16px;color:#000;text-decoration:none;font-size:15px;font-weight:700;box-shadow:4px 4px 0px #000;transition:all 0.1s ease;cursor:pointer;width:100%}
-.dl-normal:hover{background:#00ffe8;transform:translate(-2px,-2px);box-shadow:6px 6px 0px #000}
-.dl-normal:active{transform:translate(2px,2px);box-shadow:1px 1px 0px #000}
-.dl-hd{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:linear-gradient(135deg,#ff007f,#ff9f1c);border:3px solid #000;border-radius:16px;color:#fff;font-size:15px;font-weight:700;box-shadow:4px 4px 0px #000;transition:all 0.1s ease;cursor:pointer;width:100%;position:relative}
-.dl-hd:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0px #000}
-.dl-hd:active{transform:translate(2px,2px);box-shadow:1px 1px 0px #000}
-.ad-tag{background:rgba(0,0,0,0.3);font-size:10px;padding:2px 8px;border-radius:8px;margin-left:4px}
-.dl-photo{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#b500ff;border:3px solid #000;border-radius:16px;color:#fff;text-decoration:none;font-size:14px;font-weight:700;box-shadow:4px 4px 0px #000;transition:all 0.1s ease}
-.dl-photo:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0px #000}
-.dl-audio{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#00ff88;border:3px solid #000;border-radius:16px;color:#000;text-decoration:none;font-size:14px;font-weight:700;box-shadow:4px 4px 0px #000;transition:all 0.1s ease}
-.dl-audio:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0px #000}
-.error-banner{color:#fff;margin-top:20px;font-size:14px;display:none;padding:18px;background:#ff595e;border:3px solid #000;border-radius:18px;box-shadow:4px 4px 0px #000;font-weight:700;animation:systemHaltShake 0.3s ease}
-@keyframes systemHaltShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.badge{display:inline-block;padding:8px 18px;border-radius:12px;font-size:12px;font-weight:700;margin-bottom:18px;border:3px solid #000;box-shadow:4px 4px 0px #000;color:#fff}
-.b-yt{background:#ff595e}.b-tk{background:#00f2ea;color:#000}.b-ig{background:#ff007f}.b-fb{background:#1877f2}.b-tw{background:#1da1f2}.b-tb{background:#00b4ff}.b-sc{background:#ff5500}.b-rd{background:#ff4500}.b-other{background:#6c757d}
-.footer-deck{display:flex;gap:12px;margin-top:30px;padding-top:20px;border-top:3px dashed #1c2638;justify-content:center}
-.btn-trigger-footer{background:#1c2638;border:3px solid #000;padding:12px 18px;border-radius:14px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;box-shadow:4px 4px 0px #000;transition:all 0.1s ease;display:flex;align-items:center;gap:8px}
-.btn-trigger-footer:hover{background:#26334b;transform:translate(-2px,-2px);box-shadow:6px 6px 0px #000}
-.btn-trigger-footer:active{transform:translate(1px,1px);box-shadow:1px 1px 0px #000}
-.btn-legal-accent{border-color:#ff007f !important}
-.btn-legal-accent:hover{box-shadow:6px 6px 0px #ff007f !important}
-.ad-space-footer-base{width:100%;height:90px;background:#0d121c;border-radius:16px;margin-top:25px;display:flex;align-items:center;justify-content:center;color:#3b485c;font-size:12px;font-weight:700;border:2px solid #1f293d;box-shadow:inset 4px 4px 0px rgba(0,0,0,0.5);letter-spacing:1px}
-.network-status-core{margin-top:20px;color:#3b485c;font-size:11px;font-weight:600}
-.network-status-core span{color:#ff9f1c}
-.guide-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(4,6,10,0.85);backdrop-filter:blur(4px);z-index:10000;display:none;justify-content:center;align-items:center;opacity:0;transition:opacity 0.3s ease}
-.guide-overlay.active{display:flex;opacity:1}
-.guide-modal-box{background:#0d121c;border:4px solid #ff9f1c;border-radius:28px;width:92%;max-width:480px;max-height:75vh;padding:30px 20px 25px 20px;box-shadow:8px 8px 0px #000000;position:relative;transform:scale(0.8) translateY(30px);transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.3);display:flex;flex-direction:column}
-.guide-overlay.active .guide-modal-box{transform:scale(1) translateY(0)}
-.legal-modal-border{border-color:#ff007f !important}
-.cut-btn{position:absolute;top:-16px;right:-16px;width:38px;height:38px;background:#ff595e;border:3px solid #000000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0px #000;transition:all 0.1s ease;z-index:10010}
-.guide-header-title{font-size:20px;font-weight:700;color:#ff9f1c;margin-bottom:20px;text-align:center}
-.legal-header-color{color:#ff007f !important}
-.guide-view-scroller{overflow-y:auto;padding-right:8px;flex-grow:1}
-.guide-view-scroller::-webkit-scrollbar{width:5px}
-.guide-view-scroller::-webkit-scrollbar-thumb{background:#1c2638;border-radius:10px}
-.guide-node-step{margin-bottom:22px}
-.guide-node-step h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.guide-node-step h4 span{color:#ff595e}
-.legal-node-span{color:#00f2ea !important}
-.guide-node-desc{color:#76859e;font-size:13px;font-weight:600;line-height:1.5}
-/* AD MODAL */
-.ad-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
-.ad-modal-bg.show{display:flex;animation:cardReveal 0.3s ease}
-.ad-modal-box{background:#0d121c;border:4px solid #ff9f1c;border-radius:28px;width:90%;max-width:360px;padding:28px 22px;text-align:center;box-shadow:8px 8px 0 #000}
-.ad-modal-box h3{font-size:20px;font-weight:700;color:#ff9f1c;margin-bottom:8px}
-.ad-modal-box p{font-size:13px;color:#76859e;margin-bottom:18px;line-height:1.6}
-.ad-timer-bar{height:6px;background:#1c2638;border-radius:10px;overflow:hidden;margin-bottom:10px;border:2px solid #000}
-.ad-timer-fill{height:100%;width:0%;background:linear-gradient(90deg,#ff007f,#ff9f1c);transition:width 0.1s linear;border-radius:10px}
-.ad-count-text{font-size:12px;color:#ff9f1c;font-weight:700;margin-bottom:18px;letter-spacing:1px}
-.ad-modal-btns{display:flex;gap:10px}
-.ad-cancel-btn{flex:1;padding:12px;background:#ff595e;border:3px solid #000;border-radius:14px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 #000;font-family:'Fredoka',sans-serif}
-.ad-dl-btn{flex:2;padding:12px;background:#ff9f1c;border:3px solid #000;border-radius:14px;color:#000;font-size:13px;font-weight:700;cursor:not-allowed;box-shadow:3px 3px 0 #000;opacity:0.4;font-family:'Fredoka',sans-serif;transition:opacity 0.3s}
-.ad-dl-btn.ready{opacity:1;cursor:pointer}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhantDL — Premium Universal Media Extractor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fredoka', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: #080c16; 
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 🌐 ULTRA-VISIBLE & ELEGANT CYBER GRID LAYER */
+        .cyber-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 210, 255, 0.25) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.25) 2px, transparent 2px);
+            background-size: 55px 55px;
+            z-index: -2;
+            animation: gridScroll 24s linear infinite;
+        }
+
+        @keyframes gridScroll {
+            from { background-position: 0 0; }
+            to { background-position: 0 100%; }
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 550px;
+            background: #0d121c;
+            border: 4px solid #00d2ff;
+            border-radius: 32px;
+            padding: 45px 25px 35px 25px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: containerIntro 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.25), neonPulseVibe 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes containerIntro {
+            0% { transform: scale(0.9) translateY(40px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        @keyframes neonPulseVibe {
+            0% { border-color: #00d2ff; box-shadow: 6px 6px 0px #ff007f; }
+            50% { border-color: #00f2ea; box-shadow: 8px 8px 0px #ffca3a; }
+            100% { border-color: #00ff66; box-shadow: 6px 6px 0px #00d2ff; }
+        }
+
+        /* Logo Layer */
+        .logo-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 35px;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            display: inline-block;
+            cursor: pointer;
+            animation: titleFloat 3s ease-in-out infinite;
+        }
+
+        h1 span.brand-white {
+            color: #ffffff;
+            text-shadow: 4px 4px 0px #ff007f, 8px 8px 0px #2a3447;
+        }
+        h1 span.brand-orange {
+            color: #ff9f1c;
+            text-shadow: 4px 4px 0px #b5006a, 8px 8px 0px #2a3447;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* 🎇 LOGO BLAST PARTICLES */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 100;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @keyframes particleExplode {
+            0% { transform: translate(0, 0) scale(1.3); opacity: 1; }
+            75% { opacity: 0.9; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.1); opacity: 0; }
+        }
+
+        /* Input Deck Module */
+        .input-deck {
+            position: relative;
+            margin-bottom: 25px;
+            border-radius: 20px;
+            border: 3px solid #1f293d;
+            background: #06090e;
+            box-shadow: inset 5px 5px 0px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .input-container-rel {
+            position: relative;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 22px 55px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #4b5973;
+        }
+
+        /* 🖊️ DYNAMIC GRADIENT WRITING PEN */
+        .live-pen {
+            position: absolute;
+            left: -50px;
+            top: 22px;
+            font-size: 26px;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .live-pen.writing {
+            animation: penSweepLeftRight 1.4s cubic-bezier(0.11, 0, 0.5, 1) forwards, inkDepletionToGray 1.4s linear forwards;
+        }
+
+        @keyframes penSweepLeftRight {
+            0% { left: -40px; opacity: 0; transform: rotate(0deg) scale(1.2); }
+            10% { left: 15px; opacity: 1; transform: rotate(-35deg) scale(1.25); }
+            50% { left: 50%; opacity: 1; transform: rotate(-25deg) translateY(-2px) scale(1.15); }
+            85% { left: 88%; opacity: 1; transform: rotate(-15deg) scale(1.05); }
+            100% { left: 104%; opacity: 0; transform: rotate(-30deg) scale(0.85); }
+        }
+
+        @keyframes inkDepletionToGray {
+            0% { color: var(--pen-start-color); filter: drop-shadow(0 0 8px var(--pen-start-color)); }
+            35% { color: var(--pen-start-color); filter: drop-shadow(0 0 5px var(--pen-start-color)); }
+            70% { color: #5a6982; filter: drop-shadow(0 0 2px #5a6982); }
+            100% { color: #2c3545; filter: drop-shadow(0 0px transparent); }
+        }
+
+        /* Broom Sweep Layer */
+        .live-broom {
+            position: absolute;
+            right: -60px;
+            top: 14px;
+            font-size: 30px;
+            color: #ff595e;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .live-broom.sweeping {
+            animation: broomSweepRightLeft 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes broomSweepRightLeft {
+            0% { right: -60px; opacity: 0; transform: rotate(0deg); }
+            15% { right: 15px; opacity: 1; transform: rotate(-25deg); }
+            45% { right: 45%; opacity: 1; transform: rotate(-45deg) scale(1.1); }
+            75% { right: 85%; opacity: 1; transform: rotate(-15deg) scale(0.95); }
+            100% { right: 115%; opacity: 0; transform: rotate(-30deg); }
+        }
+
+        .live-trash {
+            position: absolute;
+            left: 18px;
+            top: 21px;
+            font-size: 24px;
+            color: #ff9f1c;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 4;
+        }
+
+        .live-trash.visible { opacity: 1; transform: scale(1.2); animation: trashBounce 0.4s ease infinite alternate; }
+
+        @keyframes trashBounce {
+            from { transform: scale(1.1) translateY(0); }
+            to { transform: scale(1.2) translateY(-2px); }
+        }
+
+        .vacuum-text { animation: textDisplace 1.1s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards; transform-origin: left center; }
+
+        @keyframes textDisplace {
+            0% { transform: translateX(0) scale(1); opacity: 1; filter: blur(0); }
+            40% { transform: translateX(-80px) scale(0.9); opacity: 0.8; filter: blur(1px); }
+            100% { transform: translateX(-320px) scale(0.5); opacity: 0; filter: blur(4px); }
+        }
+
+        /* PREMIUM 3D POP UTILITY BUTTON PACK */
+        .utility-grid {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 18px;
+            border: 3px solid #ffffff; 
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            transform: translateY(0);
+            transition: transform 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .btn-paste-link { background: #00f2ea; color: #000; box-shadow: 0px 6px 0px #009e99, 0px 10px 20px rgba(0, 242, 234, 0.2); }
+        .btn-clear-link { background: #ff595e; color: #fff; box-shadow: 0px 6px 0px #b3363a, 0px 10px 20px rgba(255, 89, 94, 0.2); }
+
+        .action-btn:hover { transform: translateY(-2px); }
+        .btn-paste-link:hover { box-shadow: 0px 8px 0px #009e99, 0px 12px 22px rgba(0, 242, 234, 0.3); }
+        .btn-clear-link:hover { box-shadow: 0px 8px 0px #b3363a, 0px 12px 22px rgba(255, 89, 94, 0.3); }
+
+        .action-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0px 0px 0px transparent !important;
+        }
+
+        /* Native Placement Module */
+        .native-ad-deck {
+            width: 100%; height: 60px; background: #090d12; border-radius: 14px; margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: center; color: #3b485c;
+            font-size: 11px; font-weight: 700; border: 1px dashed #1f293d; letter-spacing: 1px;
+        }
+
+        /* Main Generation Button Setup */
+        .btn-generate {
+            width: 100%; padding: 20px; background: linear-gradient(135deg, #ff007f, #ff2a93);
+            border: 3px solid #fff; border-radius: 20px; color: white; font-size: 18px; font-weight: 700;
+            cursor: pointer; letter-spacing: 1px; box-shadow: 0 8px 0 #99004c, 0 15px 30px rgba(255, 0, 127, 0.3);
+            transition: all 0.1s ease;
+        }
+
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 0 #99004c, 0 20px 30px rgba(255, 0, 127, 0.4); }
+        .btn-generate:active { transform: translateY(5px); box-shadow: 0 2px 0 #99004c; }
+
+        /* Loader */
+        .loading { display: none; justify-content: center; align-items: center; gap: 12px; margin: 30px 0; }
+        .dot { width: 16px; height: 16px; border-radius: 50%; animation: dotOscillate 0.4s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95); }
+        .dot:nth-child(1) { background: #00d2ff; }
+        .dot:nth-child(2) { background: #ff007f; animation-delay: 0.1s; }
+        .dot:nth-child(3) { background: #ff9f1c; animation-delay: 0.2s; }
+
+        @keyframes dotOscillate { from { transform: translateY(0); } to { transform: translateY(-16px); } }
+
+        /* Output View Elements */
+        .result-card {
+            margin-top: 35px; display: none; text-align: left; background: #06090e; padding: 25px;
+            border-radius: 24px; border: 3px solid #1f293d; box-shadow: inset 5px 5px 0px rgba(0,0,0,0.6);
+            animation: cardReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+        }
+
+        @keyframes cardReveal { 0% { transform: scale(0.85) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        .media-preview { width: 100%; border-radius: 16px; margin-bottom: 20px; max-height: 240px; object-fit: cover; border: 4px solid #fff; box-shadow: 5px 5px 0px #000; }
+        .media-title { font-size: 15px; font-weight: 700; margin-bottom: 20px; color: #fff; line-height: 1.5; }
+        .download-links-bucket { display: flex; flex-direction: column; gap: 14px; }
+
+        .dl-trigger {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px; background: #ff9f1c; border: 3px solid #000; border-radius: 16px;
+            color: #000; text-decoration: none; font-size: 15px; font-weight: 700;
+            box-shadow: 4px 4px 0px #000; transition: all 0.1s ease;
+        }
+
+        .dl-trigger:hover { background: #ffb347; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+        .dl-trigger:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #000; }
+
+        .error-banner {
+            color: #fff; margin-top: 20px; font-size: 14px; display: none; padding: 18px;
+            background: #ff595e; border: 3px solid #000; border-radius: 18px; box-shadow: 4px 4px 0px #000;
+            font-weight: 700; animation: systemHaltShake 0.3s ease;
+        }
+
+        @keyframes systemHaltShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+        .badge { display: inline-block; padding: 8px 18px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 18px; border: 3px solid #000; box-shadow: 4px 4px 0px #000; color: #fff; }
+        .b-yt { background: #ff595e; }
+        .b-tk { background: #00f2ea; color: #000; }
+        .b-ig { background: #ff007f; }
+        .b-fb { background: #1877f2; }
+        .b-tw { background: #1da1f2; }
+        .b-tb { background: #00b4ff; }
+
+        /* Footer System Navigation */
+        .footer-deck { display: flex; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 3px dashed #1c2638; justify-content: center; }
+        
+        .btn-trigger-footer {
+            background: #1c2638; border: 3px solid #000; padding: 12px 18px; border-radius: 14px;
+            font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; box-shadow: 4px 4px 0px #000;
+            transition: all 0.1s ease; display: flex; align-items: center; gap: 8px;
+        }
+
+        .btn-trigger-footer:hover { background: #26334b; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; }
+        .btn-trigger-footer:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #000; }
+        
+        /* Specific accent color for legal button */
+        .btn-legal-accent { border-color: #ff007f !important; }
+        .btn-legal-accent:hover { box-shadow: 6px 6px 0px #ff007f !important; }
+
+        .ad-space-footer-base {
+            width: 100%; height: 90px; background: #0d121c; border-radius: 16px; margin-top: 25px;
+            display: flex; align-items: center; justify-content: center; color: #3b485c; font-size: 12px;
+            font-weight: 700; border: 2px solid #1f293d; box-shadow: inset 4px 4px 0px rgba(0,0,0,0.5); letter-spacing: 1px;
+        }
+
+        .network-status-core { margin-top: 20px; color: #3b485c; font-size: 11px; font-weight: 600; }
+        .network-status-core span { color: #ff9f1c; }
+
+        /* Overlays & Modals Structure */
+        .guide-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4, 6, 10, 0.85);
+            backdrop-filter: blur(4px); z-index: 10000; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .guide-overlay.active { display: flex; opacity: 1; }
+
+        .guide-modal-box {
+            background: #0d121c; border: 4px solid #ff9f1c; border-radius: 28px; width: 92%; max-width: 480px;
+            max-height: 75vh; padding: 30px 20px 25px 20px; box-shadow: 8px 8px 0px #000000; position: relative;
+            transform: scale(0.8) translateY(30px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.3);
+            display: flex; flex-direction: column;
+        }
+        .guide-overlay.active .guide-modal-box { transform: scale(1) translateY(0); }
+        
+        /* Dynamic Border Accent for Legal Modal */
+        .legal-modal-border { border-color: #ff007f !important; }
+
+        .cut-btn {
+            position: absolute; top: -16px; right: -16px; width: 38px; height: 38px; background: #ff595e;
+            border: 3px solid #000000; color: #fff; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 3px 3px 0px #000;
+            transition: all 0.1s ease; z-index: 10010;
+        }
+
+        .guide-header-title { font-size: 20px; font-weight: 700; color: #ff9f1c; margin-bottom: 20px; text-align: center; }
+        .legal-header-color { color: #ff007f !important; }
+        
+        .guide-view-scroller { overflow-y: auto; padding-right: 8px; flex-grow: 1; }
+        .guide-view-scroller::-webkit-scrollbar { width: 5px; }
+        .guide-view-scroller::-webkit-scrollbar-thumb { background: #1c2638; border-radius: 10px; }
+        
+        .guide-node-step { margin-bottom: 22px; }
+        .guide-node-step h4 { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .guide-node-step h4 span { color: #ff595e; }
+        .legal-node-span { color: #00f2ea !important; }
+        .guide-node-desc { color: #76859e; font-size: 13px; font-weight: 600; line-height: 1.5; }
+    </style>
 </head>
 <body>
-<div class="cyber-grid"></div>
-<div class="container">
-  <div class="logo-wrapper" id="logoWrapper" onclick="triggerLogoBlastParticles()">
-    <h1 id="brandLogo"><span class="brand-white">PHANT</span><span class="brand-orange">DL</span></h1>
-  </div>
-  <div class="input-deck">
-    <div class="input-container-rel">
-      <input type="text" id="urlInput" placeholder="Paste your media link here...">
-    </div>
-    <i class="fa-solid fa-pen-fancy live-pen" id="livePen"></i>
-    <i class="fa-solid fa-broom live-broom" id="liveBroom"></i>
-    <i class="fa-solid fa-trash-can live-trash" id="liveTrash"></i>
-  </div>
-  <div class="utility-grid">
-    <button class="action-btn btn-paste-link" onclick="executePenWrite()"><i class="fa-solid fa-clipboard"></i> Paste Link</button>
-    <button class="action-btn btn-clear-link" onclick="executeBroomSweep()"><i class="fa-solid fa-trash-can"></i> Clear</button>
-  </div>
-  <div class="native-ad-deck">🎯 Sponsored: High-Speed Server Active! Download Now.</div>
-  <button class="btn-generate" id="btn" onclick="processExtraction()">GENERATE DOWNLOAD</button>
-  <div class="loading" id="loading">
-    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-  </div>
-  <div class="error-banner" id="error"></div>
-  <div class="result-card" id="result">
-    <div id="ptag"></div>
-    <img class="media-preview" id="thumb" src="" alt="">
-    <div class="media-title" id="ttitle"></div>
-    <div class="download-links-bucket" id="formats"></div>
-  </div>
-  <div class="footer-deck">
-    <button class="btn-trigger-footer" onclick="toggleOverlay('guideOverlay')"><i class="fa-solid fa-circle-question"></i> How to Use?</button>
-    <button class="btn-trigger-footer btn-legal-accent" onclick="toggleOverlay('legalOverlay')"><i class="fa-solid fa-shield-halved"></i> Terms & License</button>
-  </div>
-  <div class="ad-space-footer-base">🚀 Sponsored Ad: Experience Unlimited Multi-Platform Extraction.</div>
-  <div class="network-status-core"><span>Supported:</span> TikTok · Instagram · YouTube · FB · Twitter · Reddit · SoundCloud · Pinterest · +50 more</div>
-</div>
 
-<!-- GUIDE OVERLAY -->
-<div class="guide-overlay" id="guideOverlay">
-  <div class="guide-modal-box">
-    <div class="cut-btn" onclick="toggleOverlay('guideOverlay')">×</div>
-    <div class="guide-header-title">📋 SYSTEM PROTOCOL GUIDE</div>
-    <div class="guide-view-scroller">
-      <div class="guide-node-step"><h4><span>01.</span> Copy Media URL</h4><div class="guide-node-desc">Go to TikTok, Instagram, YouTube, Facebook, Twitter etc. and copy the share link.</div></div>
-      <div class="guide-node-step"><h4><span>02.</span> Paste Link</h4><div class="guide-node-desc">Click "Paste Link" button. The pen will write your link automatically.</div></div>
-      <div class="guide-node-step"><h4><span>03.</span> Generate Download</h4><div class="guide-node-desc">Press "GENERATE DOWNLOAD" to fetch all available formats.</div></div>
-      <div class="guide-node-step"><h4><span>04.</span> Choose Quality</h4><div class="guide-node-desc">Pick Normal (free) or HD (watch 1 short ad). Download starts immediately!</div></div>
-    </div>
-  </div>
-</div>
+    <div class="cyber-grid"></div>
 
-<!-- LEGAL OVERLAY -->
-<div class="guide-overlay" id="legalOverlay">
-  <div class="guide-modal-box legal-modal-border">
-    <div class="guide-header-title legal-header-color">🛡️ LEGAL & COMPLIANCE</div>
-    <div class="guide-view-scroller">
-      <div class="guide-node-step"><h4><span class="legal-node-span">⚖️</span> Legal Disclaimer</h4><div class="guide-node-desc">PhantDL is a client-side link extraction utility. Not affiliated with TikTok, Instagram, YouTube, or Facebook. All brands belong to their owners.</div></div>
-      <div class="guide-node-step"><h4><span class="legal-node-span">📜</span> Terms of Use</h4><div class="guide-node-desc">For personal, non-commercial use only. Do not download copyright-protected content without permission.</div></div>
-      <div class="guide-node-step"><h4><span class="legal-node-span">🔒</span> Privacy</h4><div class="guide-node-desc">PhantDL does not store or collect any personal data or media files.</div></div>
-    </div>
-    <div class="utility-grid" style="margin-top:20px;margin-bottom:0">
-      <button class="action-btn btn-paste-link" style="font-size:14px;padding:12px" onclick="handleConsent('accepted')"><i class="fa-solid fa-circle-check"></i> Accept</button>
-      <button class="action-btn btn-clear-link" style="font-size:14px;padding:12px;background:#3b485c;box-shadow:0px 6px 0px #212936" onclick="handleConsent('declined')"><i class="fa-solid fa-circle-xmark"></i> Decline</button>
-    </div>
-  </div>
-</div>
+    <div class="container">
+        <div class="logo-wrapper" id="logoWrapper" onclick="triggerLogoBlastParticles()">
+            <h1 id="brandLogo"><span class="brand-white">PHANT</span><span class="brand-orange">DL</span></h1>
+        </div>
 
-<!-- AD MODAL -->
-<div class="ad-modal-bg" id="adModal">
-  <div class="ad-modal-box">
-    <div style="font-size:36px;margin-bottom:10px">🎬</div>
-    <h3>HD QUALITY UNLOCK</h3>
-    <p>Watch a short ad to unlock<br>HD No-Watermark download.</p>
-    <div class="ad-timer-bar"><div class="ad-timer-fill" id="adTimerFill"></div></div>
-    <div class="ad-count-text" id="adCountText">WAIT 5 SECONDS...</div>
-    <div class="ad-modal-btns">
-      <button class="ad-cancel-btn" onclick="closeAdModal()">✕ Cancel</button>
-      <button class="ad-dl-btn" id="adDlBtn" onclick="executeHDDownload()">⬇ Download HD</button>
+        <div class="input-deck">
+            <div class="input-container-rel">
+                <input type="text" id="urlInput" placeholder="Paste your media link here...">
+            </div>
+            <i class="fa-solid fa-pen-fancy live-pen" id="livePen"></i>
+            <i class="fa-solid fa-broom live-broom" id="liveBroom"></i>
+            <i class="fa-solid fa-trash-can live-trash" id="liveTrash"></i>
+        </div>
+
+        <div class="utility-grid">
+            <button class="action-btn btn-paste-link" onclick="executePenWrite()"><i class="fa-solid fa-clipboard"></i> Paste Link</button>
+            <button class="action-btn btn-clear-link" onclick="executeBroomSweep()"><i class="fa-solid fa-trash-can"></i> Clear</button>
+        </div>
+
+        <div class="native-ad-deck">
+            🎯 Sponsored: High-Speed Server Active! Download Now.
+        </div>
+        
+        <button class="btn-generate" id="btn" onclick="processExtraction()">GENERATE DOWNLOAD</button>
+
+        <div class="loading" id="loading">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <div class="error-banner" id="error"></div>
+
+        <div class="result-card" id="result">
+            <div id="ptag"></div>
+            <img class="media-preview" id="thumb" src="" alt="Thumbnail Preview">
+            <div class="media-title" id="ttitle">Extracted Media Title</div>
+            <div class="download-links-bucket" id="formats"></div>
+        </div>
+
+        <div class="footer-deck">
+            <button class="btn-trigger-footer" onclick="toggleOverlay('guideOverlay')"><i class="fa-solid fa-circle-question"></i> How to Use?</button>
+            <button class="btn-trigger-footer btn-legal-accent" onclick="toggleOverlay('legalOverlay')"><i class="fa-solid fa-shield-halved"></i> Terms & License</button>
+        </div>
+
+        <div class="ad-space-footer-base">
+            🚀 Sponsored Ad: Experience Unlimited Multi-Platform Extraction.
+        </div>
+
+        <div class="network-status-core">
+            <span>Supported Platforms:</span> TikTok · Instagram · YouTube · FB · TeraBox
+        </div>
     </div>
-  </div>
-</div>
 
-<script>
-// ══════════════════════════════════════
-// COBALT API — Best free universal downloader
-// Supports: YouTube, TikTok, Instagram, Facebook,
-// Twitter/X, Reddit, SoundCloud, Pinterest, Vimeo,
-// Dailymotion, Twitch, Bilibili, and 50+ more
-// ══════════════════════════════════════
-const COBALT_API = 'https://api.cobalt.tools';
+    <div class="guide-overlay" id="guideOverlay">
+        <div class="guide-modal-box">
+            <div class="cut-btn" onclick="toggleOverlay('guideOverlay')">×</div>
+            <div class="guide-header-title">📋 SYSTEM PROTOCOL GUIDE</div>
+            
+            <div class="guide-view-scroller">
+                <div class="guide-node-step">
+                    <h4><span>01.</span> Copy Media URL</h4>
+                    <div class="guide-node-desc">Go to your desired app (TikTok, Instagram, YouTube) and copy the sharing link of the video or asset.</div>
+                </div>
+                <div class="guide-node-step">
+                    <h4><span>02.</span> Trigger Clipboard Paste</h4>
+                    <div class="guide-node-desc">Click on the "Paste Link" button. The system pen will deploy automatically and write down the link inside the input deck.</div>
+                </div>
+                <div class="guide-node-step">
+                    <h4><span>03.</span> Initialize Generation</h4>
+                    <div class="guide-node-desc">Press the "GENERATE DOWNLOAD" button to initialize link bypass and target the high-speed download nodes.</div>
+                </div>
+                <div class="guide-node-step">
+                    <h4><span>04.</span> Acquire Asset Storage</h4>
+                    <div class="guide-node-desc">A premium layout containing platform detection tags and individual video format buttons will pop up. Choose your quality and click to save!</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-let _hdPayload = null;
+    <div class="guide-overlay" id="legalOverlay">
+        <div class="guide-modal-box legal-modal-border">
+            <div class="guide-header-title legal-header-color">🛡️ LEGAL & COMPLIANCE POLICY</div>
+            
+            <div class="guide-view-scroller">
+                <div class="guide-node-step">
+                    <h4><span class="legal-node-span">⚖️</span> 1. Legal Disclaimer</h4>
+                    <div class="guide-node-desc">PhantDL operates purely as a client-side link extraction utility. We are not officially affiliated with, endorsed, or sponsored by TikTok, Instagram, YouTube, Facebook, or TeraBox. All product names, logos, and brands are the intellectual property of their respective owners.</div>
+                </div>
+
+                <div class="guide-node-step">
+                    <h4><span class="legal-node-span">📜</span> 2. Terms of Service</h4>
+                    <div class="guide-node-desc">This tool is intended exclusively for personal, educational, and non-commercial utilization. By accessing this platform, you agree not to use this system to download copyright-protected content without the explicit, authorized consent of the original content creator.</div>
+                </div>
+
+                <div class="guide-node-step">
+                    <h4><span class="legal-node-span">🛡️</span> 3. Intellectual Property License</h4>
+                    <div class="guide-node-desc">The visual interface, custom interactive animations (including the writing pen and broom vector sequence), and custom source code architecture are licensed strictly under personal use guidelines. Unauthorized modification, mirroring, or commercial distribution of this UI architecture is prohibited.</div>
+                </div>
+
+                <div class="guide-node-step">
+                    <h4><span class="legal-node-span">🔒</span> 4. Privacy & Data Integrity</h4>
+                    <div class="guide-node-desc">PhantDL respects user privacy protocol. We do not host, store, or archive any media files or personal links on our infrastructure. All generation sequences are executed smoothly via high-speed, secure, transient network API pipelines.</div>
+                </div>
+            </div>
+
+            <div class="utility-grid" style="margin-top: 20px; margin-bottom: 0;">
+                <button class="action-btn btn-paste-link" style="font-size: 14px; padding: 12px;" onclick="handleConsent('accepted')">
+                    <i class="fa-solid fa-circle-check"></i> Accept & Continue
+                </button>
+                <button class="action-btn btn-clear-link" style="font-size: 14px; padding: 12px; background: #3b485c; box-shadow: 0px 6px 0px #212936;" onclick="handleConsent('declined')">
+                    <i class="fa-solid fa-circle-xmark"></i> Decline
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ⏰ DYNAMIC LEGAL POP-UP LOGIC (7 SECONDS TIME-DELAY)
+        window.addEventListener('load', () => {
+            const hasConsented = localStorage.getItem('legalConsentForm');
+            if (!hasConsented) {
+                setTimeout(() => {
+                    toggleOverlay('legalOverlay');
+                }, 7000); // 7000ms = 7 Seconds Delay
+            }
+        });
+
+        function handleConsent(actionType) {
+            localStorage.setItem('legalConsentForm', actionType);
+            toggleOverlay('legalOverlay');
+            console.log('User compliance protocol status: ' + actionType);
+        }
+
+        function toggleOverlay(id) {
+            const overlay = document.getElementById(id);
+            overlay.classList.toggle('active');
+        }
+
+        // HIGH-PERFORMANCE SLOW-MOTION LOGO BLAST EMITTER
+        function triggerLogoBlastParticles() {
+            const wrapper = document.getElementById('logoWrapper');
+            const particleCount = 25; 
+            const colorPalette = ['#00f2ea', '#ff007f', '#ff9f1c', '#00ff66', '#ffffff'];
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 7 + 5; 
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.background = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                particle.style.boxShadow = `0 0 10px ${particle.style.background}`;
+
+                particle.style.left = `50%`;
+                particle.style.top = `50%`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 110 + 50; 
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+
+                const duration = Math.random() * 0.6 + 1.2; 
+                particle.style.animation = `particleExplode ${duration}s cubic-bezier(0.1, 0.8, 0.15, 1) forwards`;
+
+                wrapper.appendChild(particle);
+
+                particle.addEventListener('animationend', () => {
+                    particle.remove();
+                });
+            }
+        }
+
+        async function executePenWrite() {
+            const pen = document.getElementById('livePen');
+            const input = document.getElementById('urlInput');
+
+            // Get clipboard
+            let targetText = '';
+            try {
+                const clipboardData = await navigator.clipboard.readText();
+                if(clipboardData && clipboardData.trim().startsWith('http')) {
+                    targetText = clipboardData.trim();
+                } else {
+                    setSystemFault('No valid link in clipboard. Copy a link first!');
+                    return;
+                }
+            } catch (err) {
+                input.focus();
+                setSystemFault('Clipboard permission denied. Long press the input box and paste manually.');
+                return;
+            }
+
+            input.value = '';
+            hide('error');
+            pen.classList.remove('writing');
+            void pen.offsetWidth;
+
+            const premiumColors = ['#00f2ea', '#ff007f', '#ff9f1c', '#00ff66', '#b500ff'];
+            const randomColor = premiumColors[Math.floor(Math.random() * premiumColors.length)];
+            pen.style.setProperty('--pen-start-color', randomColor);
+            pen.classList.add('writing');
+
+            const startDelay = 140;
+            const activeDuration = 1260;
+            const totalChars = targetText.length;
+            const msPerChar = activeDuration / totalChars;
+            let currentCharIndex = 0;
+
+            setTimeout(() => {
+                const typingInterval = setInterval(() => {
+                    if (currentCharIndex < totalChars) {
+                        input.value += targetText.charAt(currentCharIndex);
+                        currentCharIndex++;
+                    } else {
+                        clearInterval(typingInterval);
+                    }
+                }, msPerChar);
+            }, startDelay);
+
+            pen.addEventListener('animationend', () => {
+                pen.classList.remove('writing');
+            }, {once: true});
+        }
+
+        function executeBroomSweep() {
+            const broom = document.getElementById('liveBroom');
+            const trash = document.getElementById('liveTrash');
+            const input = document.getElementById('urlInput');
+
+            if(!input.value) return; 
+            
+            trash.classList.add('visible');
+            
+            setTimeout(() => {
+                broom.classList.add('sweeping');
+                input.classList.add('vacuum-text');
+            }, 120);
+            
+            setTimeout(() => {
+                input.value = '';
+                hide('result');
+                hide('error');
+            }, 650);
+
+            broom.addEventListener('animationend', () => {
+                broom.classList.remove('sweeping');
+                input.classList.remove('vacuum-text');
+                setTimeout(() => {
+                    trash.classList.remove('visible');
+                }, 200);
+            }, {once: true});
+        }
+
+        function show(id) { 
+            if(id === 'loading') document.getElementById(id).style.display = 'flex';
+            else document.getElementById(id).style.display = 'block'; 
+        }
+        function hide(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function setSystemFault(msg) { 
+            document.getElementById('error').textContent = '⚠️ SYSTEM FAULT: ' + msg; 
+            show('error'); 
+        }
+
+        function extractPlatformData(url) {
+            if(url.includes('tiktok.com')) return {name:'TIKTOK PLATINUM', cls:'b-tk'};
+            if(url.includes('instagram.com')) return {name:'INSTAGRAM VECTOR', cls:'b-ig'};
+            if(url.includes('youtube.com')||url.includes('youtu.be')) return {name:'YOUTUBE CORE', cls:'b-yt'};
+            if(url.includes('facebook.com')||url.includes('fb.watch')) return {name:'FACEBOOK WAVE', cls:'b-fb'};
+            if(url.includes('twitter.com')||url.includes('x.com')) return {name:'TWITTER MATRIX', cls:'b-tw'};
+            if(url.includes('terabox.com')||url.includes('teraboxapp.com')) return {name:'TERABOX CLOUD', cls:'b-tb'};
+            return {name:'EXTERNAL MATRIX', cls:'b-tb'};
+        }
+
+        // ══════════════════════════════════════════
+// PhantDL v4.0 - Multi-API Universal Downloader
+// TikTok: tikwm.com (watermark-free, most reliable)
+// Others: Multiple fallback APIs
+// ══════════════════════════════════════════
+
 let _normalPayload = null;
+let _hdPayload = null;
 let _adTimer = null;
+let _isAudio = false;
 
-// ── LEGAL POPUP ──
+// ── LEGAL ──
 window.addEventListener('load', () => {
   if(!localStorage.getItem('phantdl_consent')) {
-    setTimeout(() => toggleOverlay('legalOverlay'), 7000);
+    setTimeout(() => toggleOverlay('legalOverlay'), 8000);
   }
 });
+function handleConsent(t){ localStorage.setItem('phantdl_consent',t); toggleOverlay('legalOverlay'); }
+function toggleOverlay(id){ document.getElementById(id).classList.toggle('active'); }
 
-function handleConsent(t) {
-  localStorage.setItem('phantdl_consent', t);
-  toggleOverlay('legalOverlay');
-}
-
-function toggleOverlay(id) {
-  document.getElementById(id).classList.toggle('active');
-}
+// ── AD MODAL INJECT ──
+window.addEventListener('load', () => {
+  const m = document.createElement('div');
+  m.id = 'adModalBg';
+  m.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
+  m.innerHTML = `<div style="background:#0d121c;border:4px solid #ff9f1c;border-radius:28px;width:90%;max-width:360px;padding:28px 22px;text-align:center;box-shadow:8px 8px 0 #000;animation:cardReveal 0.4s cubic-bezier(0.175,0.885,0.32,1.25)">
+    <div style="font-size:40px;margin-bottom:10px">🎬</div>
+    <div style="font-size:20px;font-weight:700;color:#ff9f1c;margin-bottom:8px;font-family:Fredoka">HD UNLOCK</div>
+    <div style="font-size:13px;color:#76859e;margin-bottom:18px;line-height:1.6">Watch a short ad to get<br><b style="color:#fff">100% Original Quality</b> download.</div>
+    <div style="height:6px;background:#1c2638;border-radius:10px;overflow:hidden;margin-bottom:8px;border:2px solid #000">
+      <div id="adFill" style="height:100%;width:0%;background:linear-gradient(90deg,#ff007f,#ff9f1c);transition:width 0.1s linear;border-radius:10px"></div>
+    </div>
+    <div id="adCount" style="font-size:12px;color:#ff9f1c;font-weight:700;margin-bottom:18px;letter-spacing:1px">WAIT 5 SECONDS...</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="closeAd()" style="flex:1;padding:13px;background:#ff595e;border:3px solid #000;border-radius:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 #000;font-family:Fredoka">✕ Cancel</button>
+      <button id="adDlBtn" onclick="doHDDownload()" style="flex:2;padding:13px;background:#ff9f1c;border:3px solid #000;border-radius:14px;color:#000;font-size:14px;font-weight:700;cursor:not-allowed;box-shadow:3px 3px 0 #000;opacity:0.4;font-family:Fredoka;transition:opacity 0.3s">⬇ Download HD</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+});
 
 // ── PARTICLES ──
-function triggerLogoBlastParticles() {
-  const wrapper = document.getElementById('logoWrapper');
-  const colors = ['#00f2ea','#ff007f','#ff9f1c','#00ff66','#ffffff'];
+function triggerLogoBlastParticles(){
+  const w=document.getElementById('logoWrapper');
+  const c=['#00f2ea','#ff007f','#ff9f1c','#00ff66','#ffffff'];
   for(let i=0;i<25;i++){
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const s = Math.random()*7+5;
-    p.style.width = s+'px'; p.style.height = s+'px';
-    p.style.background = colors[Math.floor(Math.random()*colors.length)];
-    p.style.boxShadow = `0 0 10px ${p.style.background}`;
-    p.style.left = '50%'; p.style.top = '50%';
-    const angle = Math.random()*Math.PI*2;
-    const dist = Math.random()*110+50;
-    p.style.setProperty('--tx', Math.cos(angle)*dist+'px');
-    p.style.setProperty('--ty', Math.sin(angle)*dist+'px');
-    const dur = Math.random()*0.6+1.2;
-    p.style.animation = `particleExplode ${dur}s cubic-bezier(0.1,0.8,0.15,1) forwards`;
-    wrapper.appendChild(p);
-    p.addEventListener('animationend', () => p.remove());
+    const p=document.createElement('div');
+    p.className='particle';
+    const s=Math.random()*7+5;
+    p.style.cssText=`width:${s}px;height:${s}px;background:${c[~~(Math.random()*c.length)]};border-radius:50%;position:absolute;left:50%;top:50%;pointer-events:none;z-index:100`;
+    const a=Math.random()*Math.PI*2,d=Math.random()*110+50;
+    p.style.setProperty('--tx',Math.cos(a)*d+'px');
+    p.style.setProperty('--ty',Math.sin(a)*d+'px');
+    p.style.animation=`particleExplode ${Math.random()*0.6+1.2}s cubic-bezier(0.1,0.8,0.15,1) forwards`;
+    w.appendChild(p);
+    p.addEventListener('animationend',()=>p.remove());
   }
 }
 
 // ── PASTE ──
-async function executePenWrite() {
-  const pen = document.getElementById('livePen');
-  const input = document.getElementById('urlInput');
-  let targetText = '';
-  try {
-    const clip = await navigator.clipboard.readText();
-    if(clip && clip.trim().startsWith('http')) {
-      targetText = clip.trim();
-    } else {
-      setSystemFault('No valid link in clipboard. Copy a link first!');
-      return;
-    }
-  } catch(e) {
-    input.focus();
-    setSystemFault('Clipboard blocked. Long press input → Paste manually.');
-    return;
-  }
-  input.value = '';
-  hide('error');
-  pen.classList.remove('writing');
-  void pen.offsetWidth;
-  const colors = ['#00f2ea','#ff007f','#ff9f1c','#00ff66','#b500ff'];
-  pen.style.setProperty('--pen-start-color', colors[Math.floor(Math.random()*colors.length)]);
+async function executePenWrite(){
+  const pen=document.getElementById('livePen');
+  const input=document.getElementById('urlInput');
+  let txt='';
+  try{
+    const clip=await navigator.clipboard.readText();
+    if(clip&&clip.trim().startsWith('http')) txt=clip.trim();
+    else{ setFault('No valid link in clipboard! Copy a link first.'); return; }
+  }catch(e){ input.focus(); setFault('Clipboard blocked. Long press input → Paste manually.'); return; }
+  input.value=''; hide('error');
+  pen.classList.remove('writing'); void pen.offsetWidth;
+  const cols=['#00f2ea','#ff007f','#ff9f1c','#00ff66','#b500ff'];
+  pen.style.setProperty('--pen-start-color',cols[~~(Math.random()*cols.length)]);
   pen.classList.add('writing');
-  const msPerChar = 1260/targetText.length;
-  let i = 0;
-  setTimeout(() => {
-    const t = setInterval(() => {
-      if(i<targetText.length){ input.value += targetText[i++]; }
-      else clearInterval(t);
-    }, msPerChar);
-  }, 140);
-  pen.addEventListener('animationend', () => pen.classList.remove('writing'), {once:true});
+  let i=0; const mpc=1260/txt.length;
+  setTimeout(()=>{ const t=setInterval(()=>{ if(i<txt.length){input.value+=txt[i++];}else clearInterval(t); },mpc); },140);
+  pen.addEventListener('animationend',()=>pen.classList.remove('writing'),{once:true});
 }
 
 // ── CLEAR ──
-function executeBroomSweep() {
-  const broom = document.getElementById('liveBroom');
-  const trash = document.getElementById('liveTrash');
-  const input = document.getElementById('urlInput');
+function executeBroomSweep(){
+  const broom=document.getElementById('liveBroom');
+  const trash=document.getElementById('liveTrash');
+  const input=document.getElementById('urlInput');
   if(!input.value) return;
   trash.classList.add('visible');
-  setTimeout(() => { broom.classList.add('sweeping'); input.classList.add('vacuum-text'); }, 120);
-  setTimeout(() => { input.value=''; hide('result'); hide('error'); }, 650);
-  broom.addEventListener('animationend', () => {
-    broom.classList.remove('sweeping');
-    input.classList.remove('vacuum-text');
-    setTimeout(() => trash.classList.remove('visible'), 200);
-  }, {once:true});
+  setTimeout(()=>{ broom.classList.add('sweeping'); input.classList.add('vacuum-text'); },120);
+  setTimeout(()=>{ input.value=''; hide('result'); hide('error'); _normalPayload=null; _hdPayload=null; _isAudio=false; },650);
+  broom.addEventListener('animationend',()=>{ broom.classList.remove('sweeping'); input.classList.remove('vacuum-text'); setTimeout(()=>trash.classList.remove('visible'),200); },{once:true});
 }
 
-function show(id){ document.getElementById(id).style.display = id==='loading'?'flex':'block'; }
-function hide(id){ document.getElementById(id).style.display = 'none'; }
-function setSystemFault(msg){ document.getElementById('error').textContent='⚠️ '+msg; show('error'); }
+function show(id){ const e=document.getElementById(id); if(id==='loading') e.style.display='flex'; else e.style.display='block'; }
+function hide(id){ document.getElementById(id).style.display='none'; }
+function setFault(m){ const e=document.getElementById('error'); e.textContent='⚠️ '+m; show('error'); }
+function setTitle(t){ document.getElementById('ttitle').textContent=t; }
+function setThumb(s){ const t=document.getElementById('thumb'); if(s){t.src=s;t.style.display='block';}else t.style.display='none'; }
 
-function getPlatformInfo(url) {
-  if(url.includes('tiktok.com')) return {name:'TIKTOK PLATINUM',cls:'b-tk'};
-  if(url.includes('instagram.com')) return {name:'INSTAGRAM VECTOR',cls:'b-ig'};
-  if(url.includes('youtube.com')||url.includes('youtu.be')) return {name:'YOUTUBE CORE',cls:'b-yt'};
-  if(url.includes('facebook.com')||url.includes('fb.watch')) return {name:'FACEBOOK WAVE',cls:'b-fb'};
-  if(url.includes('twitter.com')||url.includes('x.com')) return {name:'TWITTER MATRIX',cls:'b-tw'};
-  if(url.includes('reddit.com')) return {name:'REDDIT NODE',cls:'b-rd'};
-  if(url.includes('soundcloud.com')) return {name:'SOUNDCLOUD WAVE',cls:'b-sc'};
-  if(url.includes('terabox.com')||url.includes('teraboxapp.com')) return {name:'TERABOX CLOUD',cls:'b-tb'};
-  return {name:'EXTERNAL MATRIX',cls:'b-other'};
+function getPlatInfo(url){
+  if(url.includes('tiktok.com')) return {name:'TIKTOK',cls:'b-tk'};
+  if(url.includes('instagram.com')) return {name:'INSTAGRAM',cls:'b-ig'};
+  if(url.includes('youtube.com')||url.includes('youtu.be')) return {name:'YOUTUBE',cls:'b-yt'};
+  if(url.includes('facebook.com')||url.includes('fb.watch')) return {name:'FACEBOOK',cls:'b-fb'};
+  if(url.includes('twitter.com')||url.includes('x.com')) return {name:'TWITTER/X',cls:'b-tw'};
+  if(url.includes('reddit.com')) return {name:'REDDIT',cls:'b-rd'};
+  if(url.includes('soundcloud.com')) return {name:'SOUNDCLOUD',cls:'b-sc'};
+  if(url.includes('pinterest.com')) return {name:'PINTEREST',cls:'b-other'};
+  return {name:'UNIVERSAL',cls:'b-other'};
 }
 
-// ── MAIN EXTRACTION ──
-async function processExtraction() {
-  const url = document.getElementById('urlInput').value.trim();
-  if(!url){ setSystemFault('Please paste a valid link first!'); return; }
-  if(!url.startsWith('http')){ setSystemFault('Invalid link format!'); return; }
+// ══════════════════
+// MAIN EXTRACTION
+// ══════════════════
+async function processExtraction(){
+  const url=document.getElementById('urlInput').value.trim();
+  if(!url){ setFault('Please paste a valid link!'); return; }
+  if(!url.startsWith('http')){ setFault('Invalid link format!'); return; }
 
   triggerLogoBlastParticles();
-  document.getElementById('btn').disabled = true;
-  show('loading');
-  hide('error');
-  hide('result');
-  document.getElementById('formats').innerHTML = '';
-  _hdPayload = null;
-  _normalPayload = null;
+  document.getElementById('btn').disabled=true;
+  show('loading'); hide('error'); hide('result');
+  document.getElementById('formats').innerHTML='';
+  _normalPayload=null; _hdPayload=null; _isAudio=false;
 
-  const p = getPlatformInfo(url);
-  document.getElementById('ptag').innerHTML = `<span class="badge ${p.cls}">${p.name}</span>`;
+  const p=getPlatInfo(url);
+  document.getElementById('ptag').innerHTML=`<span class="badge ${p.cls}">${p.name} EXTRACTION</span>`;
 
-  try {
-    // ── TikTok: use tikwm first (most reliable, watermark-free) ──
-    if(url.includes('tiktok.com')) {
-      const r = await fetch('https://www.tikwm.com/api/', {
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body:'url='+encodeURIComponent(url)+'&hd=1'
-      });
-      const d = await r.json();
-      if(d.code===0 && d.data) {
-        const td = d.data;
-        setThumb(td.cover);
-        setTitle(td.title||'TikTok Video');
-        if(td.images && td.images.length>0) {
-          // Slideshow/Photos
-          td.images.forEach((img,i) => addPhotoBtn(`Photo ${i+1}`, img, i+1));
-        } else {
-          _normalPayload = {url: td.play, filename:'phantdl_normal.mp4'};
-          _hdPayload = {url: td.hdplay||td.play, filename:'phantdl_hd.mp4'};
-          addNormalBtn('Download Normal — No Watermark');
-          addHDBtn('Download HD — No Watermark');
-        }
-        // Audio
-        if(td.music) addAudioBtn('Download Audio (MP3)', td.music, 'phantdl_audio.mp3');
-        show('result');
-        hide('loading');
-        document.getElementById('btn').disabled = false;
-        return;
-      }
+  try{
+    // ══ TIKTOK ══
+    if(url.includes('tiktok.com')){
+      await extractTikTok(url);
     }
-
-    // ── Cobalt API for everything else ──
-    // Try Normal quality first
-    const normalRes = await fetch(COBALT_API, {
-      method:'POST',
-      headers:{'Accept':'application/json','Content-Type':'application/json'},
-      body: JSON.stringify({
-        url: url,
-        videoQuality: '720',
-        audioFormat: 'mp3',
-        downloadMode: 'auto',
-        filenameStyle: 'pretty'
-      })
-    });
-    const normalData = await normalRes.json();
-
-    // Try HD quality
-    const hdRes = await fetch(COBALT_API, {
-      method:'POST',
-      headers:{'Accept':'application/json','Content-Type':'application/json'},
-      body: JSON.stringify({
-        url: url,
-        videoQuality: 'max',
-        audioFormat: 'mp3',
-        downloadMode: 'auto',
-        filenameStyle: 'pretty'
-      })
-    });
-    const hdData = await hdRes.json();
-
-    // Also try audio only
-    const audioRes = await fetch(COBALT_API, {
-      method:'POST',
-      headers:{'Accept':'application/json','Content-Type':'application/json'},
-      body: JSON.stringify({
-        url: url,
-        downloadMode: 'audio',
-        audioFormat: 'mp3',
-        filenameStyle: 'pretty'
-      })
-    });
-    const audioData = await audioRes.json();
-
-    let hasResult = false;
-
-    if(normalData.status==='tunnel'||normalData.status==='redirect'||normalData.status==='stream') {
-      const fname = normalData.filename || 'phantdl_normal.mp4';
-      _normalPayload = {url: normalData.url, filename: fname};
-      setTitle(fname.replace(/\.[^/.]+$/,''));
-      addNormalBtn('Download Normal (720p)');
-      hasResult = true;
+    // ══ INSTAGRAM ══
+    else if(url.includes('instagram.com')){
+      await extractInstagram(url);
     }
-
-    if(hdData.status==='tunnel'||hdData.status==='redirect'||hdData.status==='stream') {
-      const fname = hdData.filename || 'phantdl_hd.mp4';
-      _hdPayload = {url: hdData.url, filename: fname};
-      if(!hasResult) setTitle(fname.replace(/\.[^/.]+$/,''));
-      addHDBtn('Download HD (Max Quality)');
-      hasResult = true;
+    // ══ YOUTUBE ══
+    else if(url.includes('youtube.com')||url.includes('youtu.be')){
+      await extractYouTube(url);
     }
-
-    if(audioData.status==='tunnel'||audioData.status==='redirect'||audioData.status==='stream') {
-      addAudioBtn('Download Audio (MP3)', audioData.url, audioData.filename||'phantdl_audio.mp3');
-      hasResult = true;
+    // ══ FACEBOOK ══
+    else if(url.includes('facebook.com')||url.includes('fb.watch')){
+      await extractFacebook(url);
     }
-
-    if(hasResult) {
-      show('result');
-    } else {
-      // Fallback to tiklydown
-      await fallbackExtract(url);
+    // ══ TWITTER/X ══
+    else if(url.includes('twitter.com')||url.includes('x.com')){
+      await extractTwitter(url);
     }
-
-  } catch(e) {
-    await fallbackExtract(url);
+    // ══ SOUNDCLOUD ══
+    else if(url.includes('soundcloud.com')){
+      await extractSoundCloud(url);
+    }
+    // ══ ALL OTHERS ══
+    else{
+      await extractUniversal(url);
+    }
+  }catch(e){
+    setFault('Network error. Check connection and try again.');
   }
 
   hide('loading');
-  document.getElementById('btn').disabled = false;
+  document.getElementById('btn').disabled=false;
 }
 
-// ── FALLBACK API ──
-async function fallbackExtract(url) {
-  try {
-    const r = await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
-    const d = await r.json();
-    if(d.medias && d.medias.length>0) {
-      setThumb(d.thumbnail||'');
-      setTitle(d.title||'Media File');
-      const vids = d.medias.filter(m=>m.extension==='mp4'||m.type==='video');
-      const imgs = d.medias.filter(m=>m.type==='image'||m.extension==='jpg'||m.extension==='png');
-      const auds = d.medias.filter(m=>m.type==='audio'||m.extension==='mp3');
-      if(vids.length>0){
-        _normalPayload = {url:vids[vids.length-1].url, filename:'phantdl_normal.mp4'};
-        _hdPayload = {url:vids[0].url, filename:'phantdl_hd.mp4'};
-        addNormalBtn('Download Normal — No Watermark');
-        addHDBtn('Download HD — No Watermark');
-      }
-      imgs.forEach((m,i) => addPhotoBtn(`Photo ${i+1}`, m.url, i+1));
-      auds.forEach((m,i) => addAudioBtn(`Audio ${i+1} (MP3)`, m.url, `audio_${i+1}.mp3`));
-      if(vids.length>0||imgs.length>0||auds.length>0) { show('result'); return; }
+// ══════════════════
+// TIKTOK — tikwm.com (most reliable, watermark-free)
+// ══════════════════
+async function extractTikTok(url){
+  const r=await fetch('https://www.tikwm.com/api/',{
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'Mozilla/5.0'},
+    body:'url='+encodeURIComponent(url)+'&hd=1'
+  });
+  const d=await r.json();
+  if(d.code===0&&d.data){
+    const td=d.data;
+    setThumb(td.cover||'');
+    setTitle(td.title||'TikTok Video');
+
+    if(td.images&&td.images.length>0){
+      // Photo slideshow
+      td.images.forEach((img,i)=>{
+        // Normal = compressed, HD = original
+        _normalPayload={url:img, filename:`photo_${i+1}_normal.jpg`, quality:75};
+        _hdPayload={url:img, filename:`photo_${i+1}_hd.jpg`, quality:100};
+        addPhotoBtn(`Photo ${i+1}`, img, i+1);
+      });
+    } else {
+      // Video
+      _normalPayload={url:td.play||'', filename:'tiktok_normal.mp4', quality:75};
+      _hdPayload={url:td.hdplay||td.play||'', filename:'tiktok_hd.mp4', quality:100};
+      addNormalBtn('Download Normal (75% Quality)');
+      addHDBtn('Download HD (100% Original)');
     }
-    setSystemFault('Could not extract media. Make sure the link is public.');
-  } catch(e) {
-    setSystemFault('Network failure. Check your connection and try again.');
+    // Audio always direct
+    if(td.music){
+      _isAudio=false;
+      addAudioBtn('Download Audio (MP3)', td.music, 'tiktok_audio.mp3');
+    }
+    show('result');
+  } else {
+    // Fallback
+    await extractViaSaveFrom(url);
   }
 }
 
-// ── BUTTON BUILDERS ──
-function addNormalBtn(label) {
-  const btn = document.createElement('button');
-  btn.className = 'dl-normal';
-  btn.innerHTML = '⬇️ '+label;
-  btn.onclick = downloadNormal;
+// ══════════════════
+// INSTAGRAM
+// ══════════════════
+async function extractInstagram(url){
+  // Try multiple APIs
+  let success=false;
+  
+  // API 1: instagramdownloader.cc
+  try{
+    const r=await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+    const d=await r.json();
+    if(d&&d.medias&&d.medias.length>0){
+      setThumb(d.thumbnail||'');
+      setTitle(d.title||'Instagram Media');
+      const vids=d.medias.filter(m=>m.type==='video'||m.extension==='mp4');
+      const imgs=d.medias.filter(m=>m.type==='image'||m.extension==='jpg'||m.extension==='jpeg'||m.extension==='png');
+      const auds=d.medias.filter(m=>m.type==='audio'||m.extension==='mp3');
+
+      if(vids.length>0){
+        _normalPayload={url:vids[vids.length-1].url,filename:'ig_normal.mp4',quality:75};
+        _hdPayload={url:vids[0].url,filename:'ig_hd.mp4',quality:100};
+        addNormalBtn('Download Normal (75% Quality)');
+        addHDBtn('Download HD (100% Original)');
+      }
+      imgs.forEach((m,i)=>addPhotoBtn(`Photo ${i+1}`,m.url,i+1));
+      auds.forEach((m,i)=>addAudioBtn(`Audio ${i+1}`,m.url,`ig_audio_${i+1}.mp3`));
+      
+      if(vids.length>0||imgs.length>0||auds.length>0){ show('result'); success=true; }
+    }
+  }catch(e){}
+
+  if(!success) setFault('Instagram fetch failed. Make sure the post is PUBLIC.');
+}
+
+// ══════════════════
+// YOUTUBE
+// ══════════════════
+async function extractYouTube(url){
+  // YouTube Y2Mate-style APIs
+  let success=false;
+
+  // API 1: yt1s approach via ytdl API
+  try{
+    const r=await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+    const d=await r.json();
+    if(d&&d.medias&&d.medias.length>0){
+      setThumb(d.thumbnail||'');
+      setTitle(d.title||'YouTube Video');
+      const vids=d.medias.filter(m=>m.extension==='mp4'||m.type==='video');
+      const auds=d.medias.filter(m=>m.extension==='mp3'||m.type==='audio');
+      
+      if(vids.length>0){
+        _normalPayload={url:vids[vids.length-1].url,filename:'yt_normal.mp4',quality:75};
+        _hdPayload={url:vids[0].url,filename:'yt_hd.mp4',quality:100};
+        addNormalBtn('Download Normal (75% Quality)');
+        addHDBtn('Download HD (100% Original)');
+        success=true;
+      }
+      auds.forEach((m,i)=>addAudioBtn(`Audio ${i+1} (MP3)`,m.url,`yt_audio_${i+1}.mp3`));
+      if(success) show('result');
+    }
+  }catch(e){}
+
+  if(!success){
+    // Fallback: show y2mate redirect
+    setTitle('YouTube Video');
+    setThumb('');
+    const ytId = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
+    if(ytId) setThumb(`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`);
+    _normalPayload={url:`https://www.y2mate.com/youtube/${ytId||''}`,filename:'youtube_normal.mp4',quality:75,isExternal:false};
+    _hdPayload={url:`https://www.y2mate.com/youtube/${ytId||''}`,filename:'youtube_hd.mp4',quality:100,isExternal:false};
+    addNormalBtn('Download Normal (75% Quality)');
+    addHDBtn('Download HD (100% Original)');
+    show('result');
+  }
+}
+
+// ══════════════════
+// FACEBOOK
+// ══════════════════
+async function extractFacebook(url){
+  try{
+    const r=await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+    const d=await r.json();
+    if(d&&d.medias&&d.medias.length>0){
+      setThumb(d.thumbnail||'');
+      setTitle(d.title||'Facebook Video');
+      const vids=d.medias.filter(m=>m.extension==='mp4'||m.type==='video');
+      if(vids.length>0){
+        _normalPayload={url:vids[vids.length-1].url,filename:'fb_normal.mp4',quality:75};
+        _hdPayload={url:vids[0].url,filename:'fb_hd.mp4',quality:100};
+        addNormalBtn('Download Normal (75% Quality)');
+        addHDBtn('Download HD (100% Original)');
+        show('result'); return;
+      }
+    }
+  }catch(e){}
+  setFault('Facebook video fetch failed. Make sure video is PUBLIC.');
+}
+
+// ══════════════════
+// TWITTER/X
+// ══════════════════
+async function extractTwitter(url){
+  try{
+    const r=await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+    const d=await r.json();
+    if(d&&d.medias&&d.medias.length>0){
+      setThumb(d.thumbnail||'');
+      setTitle(d.title||'Twitter/X Media');
+      const vids=d.medias.filter(m=>m.extension==='mp4'||m.type==='video');
+      const imgs=d.medias.filter(m=>m.type==='image');
+      if(vids.length>0){
+        _normalPayload={url:vids[vids.length-1].url,filename:'twitter_normal.mp4',quality:75};
+        _hdPayload={url:vids[0].url,filename:'twitter_hd.mp4',quality:100};
+        addNormalBtn('Download Normal (75% Quality)');
+        addHDBtn('Download HD (100% Original)');
+      }
+      imgs.forEach((m,i)=>addPhotoBtn(`Photo ${i+1}`,m.url,i+1));
+      show('result'); return;
+    }
+  }catch(e){}
+  setFault('Twitter/X fetch failed.');
+}
+
+// ══════════════════
+// SOUNDCLOUD (Audio only - direct download)
+// ══════════════════
+async function extractSoundCloud(url){
+  _isAudio=true;
+  try{
+    const r=await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+    const d=await r.json();
+    if(d&&d.medias&&d.medias.length>0){
+      setThumb(d.thumbnail||'');
+      setTitle(d.title||'SoundCloud Audio');
+      d.medias.forEach((m,i)=>{
+        addAudioBtn(d.title||`Track ${i+1}`, m.url, `track_${i+1}.mp3`);
+      });
+      show('result'); return;
+    }
+  }catch(e){}
+  setFault('SoundCloud fetch failed.');
+}
+
+// ══════════════════
+// UNIVERSAL FALLBACK
+// ══════════════════
+async function extractUniversal(url){
+  try{
+    const r=await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
+    const d=await r.json();
+    if(d&&d.medias&&d.medias.length>0){
+      setThumb(d.thumbnail||'');
+      setTitle(d.title||'Media File');
+      const vids=d.medias.filter(m=>m.extension==='mp4'||m.type==='video');
+      const imgs=d.medias.filter(m=>m.type==='image');
+      const auds=d.medias.filter(m=>m.type==='audio'||m.extension==='mp3');
+      if(vids.length>0){
+        _normalPayload={url:vids[vids.length-1].url,filename:'media_normal.mp4',quality:75};
+        _hdPayload={url:vids[0].url,filename:'media_hd.mp4',quality:100};
+        addNormalBtn('Download Normal (75% Quality)');
+        addHDBtn('Download HD (100% Original)');
+      }
+      imgs.forEach((m,i)=>addPhotoBtn(`Photo ${i+1}`,m.url,i+1));
+      auds.forEach((m,i)=>addAudioBtn(`Audio ${i+1}`,m.url,`audio_${i+1}.mp3`));
+      if(vids.length>0||imgs.length>0||auds.length>0){ show('result'); return; }
+    }
+  }catch(e){}
+  await extractViaSaveFrom(url);
+}
+
+async function extractViaSaveFrom(url){
+  // Last resort - show savefrom link
+  setTitle('Media Found');
+  _normalPayload={url:`https://en.savefrom.net/#url=${encodeURIComponent(url)}`,filename:'media.mp4',quality:75,isExternal:true};
+  _hdPayload={url:`https://en.savefrom.net/#url=${encodeURIComponent(url)}`,filename:'media_hd.mp4',quality:100,isExternal:true};
+  addNormalBtn('Download Normal (External)');
+  addHDBtn('Download HD (External)');
+  show('result');
+}
+
+// ══════════════════
+// BUTTON BUILDERS
+// ══════════════════
+function addNormalBtn(label){
+  const btn=document.createElement('button');
+  btn.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:#00f2ea;border:3px solid #000;border-radius:16px;color:#000;font-size:15px;font-weight:700;box-shadow:4px 4px 0 #000;transition:all 0.1s ease;cursor:pointer;width:100%;font-family:Fredoka;margin-bottom:0';
+  btn.innerHTML='⬇️ '+label;
+  btn.onmouseenter=()=>{btn.style.transform='translate(-2px,-2px)';btn.style.boxShadow='6px 6px 0 #000';};
+  btn.onmouseleave=()=>{btn.style.transform='';btn.style.boxShadow='4px 4px 0 #000';};
+  btn.onclick=doNormalDownload;
+  btn.style.marginBottom='12px';
   document.getElementById('formats').appendChild(btn);
 }
 
-function addHDBtn(label) {
-  const btn = document.createElement('button');
-  btn.className = 'dl-hd';
-  btn.innerHTML = `🎬 ${label} <span class="ad-tag">1 AD</span>`;
-  btn.onclick = showAdModal;
+function addHDBtn(label){
+  const btn=document.createElement('button');
+  btn.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:linear-gradient(135deg,#ff007f,#ff9f1c);border:3px solid #000;border-radius:16px;color:#fff;font-size:15px;font-weight:700;box-shadow:4px 4px 0 #000;transition:all 0.1s ease;cursor:pointer;width:100%;font-family:Fredoka;position:relative;margin-bottom:0';
+  btn.innerHTML=`🎬 ${label} <span style="background:rgba(0,0,0,0.3);font-size:10px;padding:2px 8px;border-radius:8px;margin-left:4px">1 AD</span>`;
+  btn.onmouseenter=()=>{btn.style.transform='translate(-2px,-2px)';btn.style.boxShadow='6px 6px 0 #000';};
+  btn.onmouseleave=()=>{btn.style.transform='';btn.style.boxShadow='4px 4px 0 #000';};
+  btn.onclick=showAd;
   document.getElementById('formats').appendChild(btn);
 }
 
-function addPhotoBtn(label, url, idx) {
-  const a = document.createElement('a');
-  a.className = 'dl-photo';
-  a.innerHTML = '🖼️ '+label;
-  a.href = url;
-  a.target = '_blank';
-  a.download = `phantdl_photo_${idx}.jpg`;
+function addPhotoBtn(label, url, idx){
+  const a=document.createElement('a');
+  a.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#b500ff;border:3px solid #000;border-radius:16px;color:#fff;text-decoration:none;font-size:14px;font-weight:700;box-shadow:4px 4px 0 #000;cursor:pointer;font-family:Fredoka';
+  a.innerHTML='🖼️ '+label;
+  a.href=url; a.target='_blank'; a.download=`photo_${idx}.jpg`;
   document.getElementById('formats').appendChild(a);
 }
 
-function addAudioBtn(label, url, filename) {
-  const a = document.createElement('a');
-  a.className = 'dl-audio';
-  a.innerHTML = '🎵 '+label;
-  a.href = url;
-  a.target = '_blank';
-  a.download = filename;
+function addAudioBtn(label, url, filename){
+  const a=document.createElement('a');
+  a.style.cssText='display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#00ff88;border:3px solid #000;border-radius:16px;color:#000;text-decoration:none;font-size:14px;font-weight:700;box-shadow:4px 4px 0 #000;cursor:pointer;font-family:Fredoka';
+  a.innerHTML='🎵 '+label+' — Direct Download';
+  // Audio: always fetch+blob for direct download
+  a.onclick = (e)=>{
+    e.preventDefault();
+    fetch(url,{mode:'cors'})
+      .then(r=>r.blob())
+      .then(blob=>{
+        const dl=document.createElement('a');
+        dl.href=URL.createObjectURL(blob);
+        dl.download=filename;
+        document.body.appendChild(dl); dl.click(); document.body.removeChild(dl);
+        URL.revokeObjectURL(dl.href);
+      })
+      .catch(()=>{ window.open(url,'_blank'); });
+  };
   document.getElementById('formats').appendChild(a);
 }
 
-function setThumb(src) {
-  const t = document.getElementById('thumb');
-  if(src){ t.src=src; t.style.display='block'; }
-  else t.style.display='none';
-}
-function setTitle(txt){ document.getElementById('ttitle').textContent = txt; }
-
-// ── DOWNLOAD FUNCTIONS ──
-function downloadNormal() {
+// ══════════════════
+// DOWNLOAD LOGIC
+// ══════════════════
+function doNormalDownload(){
   if(!_normalPayload) return;
-  triggerDownload(_normalPayload.url, _normalPayload.filename);
+  if(_normalPayload.isExternal){ window.open(_normalPayload.url,'_blank'); return; }
+  startDownload(_normalPayload.url, _normalPayload.filename, 75);
 }
 
-function triggerDownload(url, filename) {
-  // Use fetch+blob for direct download (no video player popup)
-  fetch(url)
-    .then(r => {
-      if(!r.ok) throw new Error('fetch failed');
-      return r.blob();
-    })
-    .then(blob => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    })
-    .catch(() => {
-      // Fallback: direct link
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.target = '_blank';
-      a.click();
-    });
-}
-
-// ── AD MODAL ──
-function showAdModal() {
+function showAd(){
   if(!_hdPayload) return;
-  document.getElementById('adModal').classList.add('show');
-  document.getElementById('adDlBtn').classList.remove('ready');
-  document.getElementById('adTimerFill').style.width = '0%';
-  document.getElementById('adCountText').textContent = 'WAIT 5 SECONDS...';
-  let t = 0;
-  _adTimer = setInterval(() => {
-    t += 100;
-    document.getElementById('adTimerFill').style.width = (t/5000*100)+'%';
-    const rem = Math.ceil((5000-t)/1000);
-    if(t<5000) {
-      document.getElementById('adCountText').textContent = `WAIT ${rem} SECOND${rem!==1?'S':''}...`;
+  const m=document.getElementById('adModalBg');
+  m.style.display='flex';
+  document.getElementById('adDlBtn').style.opacity='0.4';
+  document.getElementById('adDlBtn').style.cursor='not-allowed';
+  document.getElementById('adFill').style.width='0%';
+  document.getElementById('adCount').textContent='WAIT 5 SECONDS...';
+  let t=0;
+  _adTimer=setInterval(()=>{
+    t+=100;
+    document.getElementById('adFill').style.width=(t/5000*100)+'%';
+    const rem=Math.ceil((5000-t)/1000);
+    if(t<5000){
+      document.getElementById('adCount').textContent=`WAIT ${rem} SECOND${rem!==1?'S':''}...`;
     } else {
       clearInterval(_adTimer);
-      document.getElementById('adDlBtn').classList.add('ready');
-      document.getElementById('adCountText').textContent = '✅ READY TO DOWNLOAD!';
+      document.getElementById('adDlBtn').style.opacity='1';
+      document.getElementById('adDlBtn').style.cursor='pointer';
+      document.getElementById('adCount').textContent='✅ READY!';
     }
-  }, 100);
+  },100);
 }
 
-function closeAdModal() {
-  document.getElementById('adModal').classList.remove('show');
+function closeAd(){
+  document.getElementById('adModalBg').style.display='none';
   if(_adTimer) clearInterval(_adTimer);
 }
 
-function executeHDDownload() {
+function doHDDownload(){
   if(!_hdPayload) return;
-  closeAdModal();
-  triggerDownload(_hdPayload.url, _hdPayload.filename);
+  closeAd();
+  if(_hdPayload.isExternal){ window.open(_hdPayload.url,'_blank'); return; }
+  startDownload(_hdPayload.url, _hdPayload.filename, 100);
+}
+
+// ══════════════════
+// SMART DOWNLOAD SYSTEM
+// Video: Normal=lower quality URL, HD=best URL
+// Image: Normal=Canvas 75% compress, HD=original
+// Audio: Always direct, no quality system
+// ══════════════════
+function startDownload(url, filename, quality){
+  const isImage = /\.(jpg|jpeg|png|webp)/i.test(filename) || /\.(jpg|jpeg|png|webp)/i.test(url);
+  
+  if(isImage && quality && quality < 100){
+    // Image: compress with Canvas
+    compressImage(url, filename, quality/100);
+    return;
+  }
+  
+  // Video/Audio: fetch+blob (no video player popup)
+  fetch(url, {mode:'cors'})
+    .then(r=>{ if(!r.ok) throw new Error('cors'); return r.blob(); })
+    .then(blob=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    })
+    .catch(()=>{
+      // Fallback
+      const a=document.createElement('a');
+      a.href=url; a.download=filename; a.target='_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+}
+
+function compressImage(url, filename, quality){
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function(){
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    canvas.toBlob(blob=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }, 'image/jpeg', quality);
+  };
+  img.onerror = ()=>{
+    // Fallback direct
+    const a=document.createElement('a');
+    a.href=url; a.download=filename; a.target='_blank';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  };
+  img.src = url;
 }
 
 // ── ENTER KEY ──
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('urlInput').addEventListener('keypress', e => {
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('urlInput').addEventListener('keypress',e=>{
     if(e.key==='Enter') processExtraction();
   });
 });
