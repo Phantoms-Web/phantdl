@@ -22,10 +22,18 @@
         @keyframes titleFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
         .particle { position:absolute; pointer-events:none; border-radius:50%; z-index:100; opacity:0; will-change:transform,opacity; }
         @keyframes particleExplode { 0%{transform:translate(0,0) scale(1.3);opacity:1} 75%{opacity:0.9} 100%{transform:translate(var(--tx),var(--ty)) scale(0.1);opacity:0} }
+
+        /* Download counter — same visual language as the rest of the panel, nothing else moved */
+        .counter-deck { width:100%; background:#06090e; border:3px solid #1f293d; border-radius:18px; padding:14px 18px; margin-bottom:25px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:inset 4px 4px 0px rgba(0,0,0,0.5); }
+        .counter-icon { font-size:18px; color:#ff9f1c; animation:titleFloat 2s ease-in-out infinite; }
+        .counter-text { font-size:13px; font-weight:600; color:#76859e; letter-spacing:0.5px; }
+        .counter-num { font-size:16px; font-weight:700; color:#00f2ea; margin-left:4px; }
+
         .input-deck { position:relative; margin-bottom:25px; border-radius:20px; border:3px solid #1f293d; background:#06090e; box-shadow:inset 5px 5px 0px rgba(0,0,0,0.5); overflow:hidden; }
         .input-container-rel { position:relative; width:100%; }
         input { width:100%; padding:22px 55px; background:transparent; border:none; color:#fff; font-size:15px; font-weight:600; outline:none; }
         input::placeholder { color:#4b5973; }
+        #urlInput { user-select:text; }
         .live-pen { position:absolute; left:-50px; top:22px; font-size:26px; pointer-events:none; opacity:0; z-index:5; }
         .live-pen.writing { animation:penSweepLeftRight 1.4s cubic-bezier(0.11,0,0.5,1) forwards,inkDepletionToGray 1.4s linear forwards; }
         @keyframes penSweepLeftRight { 0%{left:-40px;opacity:0;transform:rotate(0deg) scale(1.2)} 10%{left:15px;opacity:1;transform:rotate(-35deg) scale(1.25)} 50%{left:50%;opacity:1;transform:rotate(-25deg) translateY(-2px) scale(1.15)} 85%{left:88%;opacity:1;transform:rotate(-15deg) scale(1.05)} 100%{left:104%;opacity:0;transform:rotate(-30deg) scale(0.85)} }
@@ -46,16 +54,20 @@
         .btn-paste-link:hover { box-shadow:0px 8px 0px #009e99,0px 12px 22px rgba(0,242,234,0.3); }
         .btn-clear-link:hover { box-shadow:0px 8px 0px #b3363a,0px 12px 22px rgba(255,89,94,0.3); }
         .action-btn:active { transform:translateY(6px); box-shadow:0px 0px 0px transparent !important; }
+        .action-btn:disabled { opacity:0.5; cursor:not-allowed; transform:translateY(0) !important; }
         .native-ad-deck { width:100%; height:60px; background:#090d12; border-radius:14px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; color:#3b485c; font-size:11px; font-weight:700; border:1px dashed #1f293d; letter-spacing:1px; }
         .btn-generate { width:100%; padding:20px; background:linear-gradient(135deg,#ff007f,#ff2a93); border:3px solid #fff; border-radius:20px; color:white; font-size:18px; font-weight:700; cursor:pointer; letter-spacing:1px; box-shadow:0 8px 0 #99004c,0 15px 30px rgba(255,0,127,0.3); transition:all 0.1s ease; }
         .btn-generate:hover { transform:translateY(-2px); box-shadow:0 10px 0 #99004c,0 20px 30px rgba(255,0,127,0.4); }
         .btn-generate:active { transform:translateY(5px); box-shadow:0 2px 0 #99004c; }
-        .loading { display:none; justify-content:center; align-items:center; gap:12px; margin:30px 0; }
+        .btn-generate:disabled { opacity:0.6; cursor:not-allowed; transform:translateY(0) !important; box-shadow:0 8px 0 #99004c,0 15px 30px rgba(255,0,127,0.3) !important; }
+        .loading { display:none; flex-direction:column; justify-content:center; align-items:center; gap:12px; margin:30px 0; }
+        .loading-dots { display:flex; gap:12px; }
         .dot { width:16px; height:16px; border-radius:50%; animation:dotOscillate 0.4s infinite alternate cubic-bezier(0.45,0.05,0.55,0.95); }
         .dot:nth-child(1) { background:#00d2ff; }
         .dot:nth-child(2) { background:#ff007f; animation-delay:0.1s; }
         .dot:nth-child(3) { background:#ff9f1c; animation-delay:0.2s; }
         @keyframes dotOscillate { from{transform:translateY(0)} to{transform:translateY(-16px)} }
+        .loading-text { font-size:13px; font-weight:600; color:#76859e; letter-spacing:0.5px; }
         .result-card { margin-top:35px; display:none; text-align:left; background:#06090e; padding:25px; border-radius:24px; border:3px solid #1f293d; box-shadow:inset 5px 5px 0px rgba(0,0,0,0.6); animation:cardReveal 0.4s cubic-bezier(0.175,0.885,0.32,1.25); }
         @keyframes cardReveal { 0%{transform:scale(0.85) translateY(20px);opacity:0} 100%{transform:scale(1) translateY(0);opacity:1} }
         .media-preview { width:100%; border-radius:16px; margin-bottom:20px; max-height:240px; object-fit:cover; border:4px solid #fff; box-shadow:5px 5px 0px #000; }
@@ -90,6 +102,17 @@
         .guide-node-step h4 span { color:#ff595e; }
         .legal-node-span { color:#00f2ea !important; }
         .guide-node-desc { color:#76859e; font-size:13px; font-weight:600; line-height:1.5; }
+
+        /* Download-link button classes — values copied 1:1 from the old inline styles, nothing changed visually */
+        .dl-btn { display:flex; align-items:center; justify-content:center; gap:10px; border:3px solid #000; border-radius:16px; cursor:pointer; width:100%; font-family:'Fredoka',sans-serif; transition:all 0.1s ease; margin-bottom:12px; }
+        .dl-btn:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 #000; }
+        .dl-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+        .dl-normal-video { padding:16px; background:#00f2ea; color:#000; font-size:15px; font-weight:700; box-shadow:4px 4px 0 #000; }
+        .dl-hd-video { padding:16px; background:linear-gradient(135deg,#ff007f,#ff9f1c); color:#fff; font-size:15px; font-weight:700; box-shadow:4px 4px 0 #000; }
+        .dl-normal-img { padding:14px; background:#00f2ea; color:#000; font-size:14px; font-weight:700; box-shadow:4px 4px 0 #000; margin-bottom:8px; }
+        .dl-hd-img { padding:14px; background:linear-gradient(135deg,#ff007f,#ff9f1c); color:#fff; font-size:14px; font-weight:700; box-shadow:4px 4px 0 #000; margin-bottom:8px; }
+        .dl-audio { padding:14px; background:linear-gradient(135deg,#00ff88,#00d2ff); color:#000; font-size:14px; font-weight:700; box-shadow:4px 4px 0 #000; margin-bottom:8px; }
+        .ad-pill { background:rgba(0,0,0,0.3); font-size:10px; padding:2px 8px; border-radius:8px; margin-left:4px; }
     </style>
 </head>
 <body>
@@ -98,6 +121,13 @@
     <div class="logo-wrapper" id="logoWrapper" onclick="triggerLogoBlastParticles()">
         <h1><span class="brand-white">PHANT</span><span class="brand-orange">DL</span></h1>
     </div>
+
+    <div class="counter-deck" id="counterDeck">
+        <i class="fa-solid fa-bolt counter-icon"></i>
+        <span class="counter-text">Total Files Delivered:</span>
+        <span class="counter-num" id="counterNum">—</span>
+    </div>
+
     <div class="input-deck">
         <div class="input-container-rel">
             <input type="text" id="urlInput" placeholder="Paste your media link here...">
@@ -107,12 +137,15 @@
         <i class="fa-solid fa-trash-can live-trash" id="liveTrash"></i>
     </div>
     <div class="utility-grid">
-        <button class="action-btn btn-paste-link" onclick="executePenWrite()"><i class="fa-solid fa-clipboard"></i> Paste Link</button>
-        <button class="action-btn btn-clear-link" onclick="executeBroomSweep()"><i class="fa-solid fa-trash-can"></i> Clear</button>
+        <button class="action-btn btn-paste-link" id="btnPaste" onclick="executePenWrite()"><i class="fa-solid fa-clipboard"></i> Paste Link</button>
+        <button class="action-btn btn-clear-link" id="btnClear" onclick="executeBroomSweep()"><i class="fa-solid fa-trash-can"></i> Clear</button>
     </div>
     <div class="native-ad-deck">🎯 Sponsored: High-Speed Server Active! Download Now.</div>
     <button class="btn-generate" id="btn" onclick="processExtraction()">GENERATE DOWNLOAD</button>
-    <div class="loading" id="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="loading" id="loading">
+        <div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <div class="loading-text" id="loadingText">Connecting...</div>
+    </div>
     <div class="error-banner" id="error"></div>
     <div class="result-card" id="result">
         <div id="ptag"></div>
@@ -158,22 +191,72 @@
 </div>
 
 <script>
+// ⚠️ CHANGE THIS if your backend URL is different
 const BACKEND = 'https://phantdl-backend.onrender.com';
 
 let _normalPayload = null;
 let _hdPayload = null;
 let _adTimer = null;
 let _pendingDownload = null;
+let _pendingConsentAction = null;
+let _downloadInFlight = false;
 
-// ── LEGAL ──
+// ── WAKE BACKEND + LOAD COUNTER ON PAGE LOAD ──
 window.addEventListener('load', () => {
-    if (!localStorage.getItem('phantdl_consent')) {
-        setTimeout(() => toggleOverlay('legalOverlay'), 7000);
-    }
+    wakeBackend();
+    refreshCounter();
     injectAdModal();
+    setInterval(refreshCounter, 20000);
 });
 
-function handleConsent(t) { localStorage.setItem('phantdl_consent', t); toggleOverlay('legalOverlay'); }
+function wakeBackend() {
+    fetch(`${BACKEND}/ping`).catch(() => {});
+}
+
+// ── DOWNLOAD COUNTER ──
+async function refreshCounter() {
+    try {
+        const r = await fetch(`${BACKEND}/api/counter`);
+        const d = await r.json();
+        if (typeof d.count === 'number') setCounterDisplay(d.count);
+    } catch (e) {
+        // Backend may still be waking up — silently retry on next interval
+    }
+}
+
+function setCounterDisplay(n) {
+    document.getElementById('counterNum').textContent = n.toLocaleString('en-US');
+}
+
+async function bumpCounter() {
+    try {
+        const r = await fetch(`${BACKEND}/api/counter/increment`, { method: 'POST' });
+        const d = await r.json();
+        if (typeof d.count === 'number') setCounterDisplay(d.count);
+    } catch (e) {
+        // non-critical — counter just won't tick this time
+    }
+}
+
+// ── LEGAL: now gated on first real download action instead of a timed popup ──
+function handleConsent(t) {
+    localStorage.setItem('phantdl_consent', t);
+    toggleOverlay('legalOverlay');
+    if (t === 'accepted' && _pendingConsentAction) {
+        const fn = _pendingConsentAction;
+        _pendingConsentAction = null;
+        fn();
+    } else {
+        _pendingConsentAction = null;
+    }
+}
+
+function requireConsent(action) {
+    if (localStorage.getItem('phantdl_consent') === 'accepted') { action(); return; }
+    _pendingConsentAction = action;
+    toggleOverlay('legalOverlay');
+}
+
 function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
 
 // ── AD MODAL ──
@@ -197,11 +280,14 @@ function injectAdModal() {
     document.body.appendChild(m);
 }
 
-// ── PARTICLES ──
+// ── PARTICLES (capped so rapid clicking can't flood the DOM) ──
+let _activeParticles = 0;
+const MAX_PARTICLES = 60;
 function triggerLogoBlastParticles() {
     const w = document.getElementById('logoWrapper');
     const c = ['#00f2ea','#ff007f','#ff9f1c','#00ff66','#ffffff'];
     for (let i = 0; i < 25; i++) {
+        if (_activeParticles >= MAX_PARTICLES) break;
         const p = document.createElement('div');
         p.className = 'particle';
         const s = Math.random() * 7 + 5;
@@ -211,11 +297,12 @@ function triggerLogoBlastParticles() {
         p.style.setProperty('--ty', Math.sin(a)*d+'px');
         p.style.animation = `particleExplode ${Math.random()*0.6+1.2}s cubic-bezier(0.1,0.8,0.15,1) forwards`;
         w.appendChild(p);
-        p.addEventListener('animationend', () => p.remove());
+        _activeParticles++;
+        p.addEventListener('animationend', () => { p.remove(); _activeParticles--; });
     }
 }
 
-// ── PASTE ──
+// ── PASTE (with iOS/Safari-friendly fallback) ──
 async function executePenWrite() {
     const pen = document.getElementById('livePen');
     const input = document.getElementById('urlInput');
@@ -224,7 +311,12 @@ async function executePenWrite() {
         const clip = await navigator.clipboard.readText();
         if (clip && clip.trim().startsWith('http')) txt = clip.trim();
         else { setFault('No valid link in clipboard!'); return; }
-    } catch(e) { input.focus(); setFault('Clipboard blocked. Long-press → Paste manually.'); return; }
+    } catch(e) {
+        input.focus();
+        input.select();
+        setFault('Clipboard access is blocked by your browser. Tap and hold the input field, then choose Paste.');
+        return;
+    }
     input.value = ''; hide('error');
     pen.classList.remove('writing'); void pen.offsetWidth;
     const cols = ['#00f2ea','#ff007f','#ff9f1c','#00ff66','#b500ff'];
@@ -255,6 +347,12 @@ function hide(id) { document.getElementById(id).style.display='none'; }
 function setFault(m) { document.getElementById('error').textContent='⚠️ '+m; show('error'); }
 function setTitle(t) { document.getElementById('ttitle').textContent=t; }
 function setThumb(s) { const t=document.getElementById('thumb'); if(s){t.src=s;t.style.display='block';}else t.style.display='none'; }
+function setLoadingText(t) { const e=document.getElementById('loadingText'); if(e) e.textContent=t; }
+
+function isValidUrl(str) {
+    try { const u = new URL(str); return u.protocol === 'http:' || u.protocol === 'https:'; }
+    catch(e) { return false; }
+}
 
 function getPlatInfo(url) {
     if(url.includes('tiktok.com')) return {name:'TIKTOK',cls:'b-tk'};
@@ -272,7 +370,7 @@ function getPlatInfo(url) {
 async function processExtraction() {
     const url = document.getElementById('urlInput').value.trim();
     if (!url) { setFault('Please paste a valid link!'); return; }
-    if (!url.startsWith('http')) { setFault('Invalid link format!'); return; }
+    if (!isValidUrl(url)) { setFault('Invalid link format!'); return; }
     triggerLogoBlastParticles();
     document.getElementById('btn').disabled = true;
     show('loading'); hide('error'); hide('result');
@@ -280,6 +378,7 @@ async function processExtraction() {
     _normalPayload = null; _hdPayload = null;
     const p = getPlatInfo(url);
     document.getElementById('ptag').innerHTML = `<span class="badge ${p.cls}">${p.name} EXTRACTION</span>`;
+    setLoadingText(`Fetching ${p.name} data...`);
     try {
         if(url.includes('tiktok.com')) await extractTikTok(url);
         else if(url.includes('instagram.com')) await extractViaAPI(url,'Instagram Media','ig');
@@ -290,45 +389,60 @@ async function processExtraction() {
         else if(url.includes('terabox.com')||url.includes('teraboxapp.com')||url.includes('1024terabox.com')) await extractTeraBox(url);
         else await extractViaBackend(url,'Media File','media');
     } catch(e) {
-        setFault('Network error. Check connection and try again.');
+        setFault('Network error. Check your connection and try again.');
     }
     hide('loading');
     document.getElementById('btn').disabled = false;
 }
 
-// ── TIKTOK (tikwm.com — most reliable) ──
+// ── TIKTOK (tikwm.com) ──
 async function extractTikTok(url) {
-    const r = await fetch('https://www.tikwm.com/api/', {
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        body:'url='+encodeURIComponent(url)+'&hd=1'
-    });
-    const d = await r.json();
+    setLoadingText('Talking to TikTok servers...');
+    let d;
+    try {
+        const r = await fetch('https://www.tikwm.com/api/', {
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            body:'url='+encodeURIComponent(url)+'&hd=1'
+        });
+        d = await r.json();
+    } catch(e) {
+        setFault('TikTok service is unreachable right now. Try again in a moment.');
+        return;
+    }
     if (d.code===0 && d.data) {
         const td = d.data;
         setThumb(td.cover||'');
         setTitle(td.title||'TikTok Video');
         if (td.images && td.images.length>0) {
-            td.images.forEach((img,i) => {
-                addNormalImgBtn(`Photo ${i+1} (75% Quality)`, img, i+1);
-                addHDImgBtn(`Photo ${i+1} HD (Original)`, img, i+1);
-            });
+            td.images.forEach((img,i) => addImageBtn(`Photo ${i+1}`, img, i+1));
         } else {
-            _normalPayload = {url:td.play||'', filename:'tiktok_normal.mp4', type:'video'};
-            _hdPayload = {url:td.hdplay||td.play||'', filename:'tiktok_hd.mp4', type:'video'};
-            addNormalVideoBtn('Download Video (75% Quality)');
-            addHDVideoBtn('Download HD Video (Original)');
+            const hasRealHd = td.hdplay && td.hdplay !== td.play;
+            _normalPayload = {url:td.play||'', filename:'tiktok_video.mp4', type:'video'};
+            if (hasRealHd) {
+                _hdPayload = {url:td.hdplay, filename:'tiktok_hd.mp4', type:'video'};
+                addNormalVideoBtn('Download Video');
+                addHDVideoBtn('Download HD Video');
+            } else {
+                addNormalVideoBtn('Download Video');
+            }
         }
         if (td.music) addAudioBtn('Download Audio (MP3)', td.music, 'tiktok_audio.mp3');
         show('result'); return;
     }
-    await extractViaBackend(url,'TikTok Video','tiktok');
+    setFault('Could not extract this TikTok link. Make sure the video is public and the link is correct.');
 }
 
 // ── YOUTUBE + FACEBOOK + UNIVERSAL via Backend ──
 async function extractViaBackend(url, defaultTitle, prefix) {
+    setLoadingText(prefix === 'yt' ? 'Asking YouTube for stream info...' : 'Processing on server...');
     try {
         const r = await fetch(`${BACKEND}/api/info?url=${encodeURIComponent(url)}`);
+        if (!r.ok) {
+            const errBody = await r.json().catch(()=>({}));
+            handleBackendError(prefix, errBody);
+            return;
+        }
         const d = await r.json();
         if (d && d.formats && d.formats.length>0) {
             setThumb(d.thumbnail||'');
@@ -342,20 +456,34 @@ async function extractViaBackend(url, defaultTitle, prefix) {
             if (videos.length>0) {
                 const normalVid = videos[videos.length-1];
                 const hdVid = videos[0];
-                _normalPayload = {url:normalVid.url, filename:`${prefix}_normal.mp4`, type:'video'};
-                _hdPayload = {url:hdVid.url, filename:`${prefix}_hd.mp4`, type:'video'};
-                addNormalVideoBtn(`Download Video (${normalVid.quality||'SD'} · 75% Quality)`);
-                addHDVideoBtn(`Download HD Video (${hdVid.quality||'Best'} · Original)`);
+                _normalPayload = {url:normalVid.url, filename:`${prefix}_${normalVid.quality||'normal'}.mp4`, type:'video'};
+                addNormalVideoBtn(`Download Video (${normalVid.quality||'SD'})`);
+                if (videos.length>1 && hdVid.url !== normalVid.url) {
+                    _hdPayload = {url:hdVid.url, filename:`${prefix}_${hdVid.quality||'hd'}.mp4`, type:'video'};
+                    addHDVideoBtn(`Download HD Video (${hdVid.quality||'Best'})`);
+                }
             }
             audios.forEach(a => addAudioBtn('Download Audio (MP3)', a.url, `${prefix}_audio.mp3`));
             show('result'); return;
         }
-    } catch(e) {}
-    setFault('Could not extract. Make sure the link is PUBLIC.');
+        setFault(`Could not extract this ${defaultTitle}. Make sure the link is PUBLIC and not age-restricted.`);
+    } catch(e) {
+        setFault('Server is waking up or unreachable. Please wait a few seconds and try again.');
+    }
+}
+
+function handleBackendError(prefix, body) {
+    const map = {
+        yt: 'Could not extract this YouTube video. It may be private, age-restricted, or region-locked.',
+        fb: 'Could not extract this Facebook video. Make sure the post is public.',
+        media: 'Could not extract this link. The site may not be supported.'
+    };
+    setFault(map[prefix] || 'Could not extract. Make sure the link is PUBLIC.');
 }
 
 // ── INSTAGRAM + TWITTER + SOUNDCLOUD via tiklydown API ──
 async function extractViaAPI(url, defaultTitle, prefix) {
+    setLoadingText(`Fetching ${defaultTitle}...`);
     try {
         const r = await fetch(`https://api.tiklydown.eu.org/api/download/v3?url=${encodeURIComponent(url)}`);
         const d = await r.json();
@@ -366,21 +494,27 @@ async function extractViaAPI(url, defaultTitle, prefix) {
             const imgs = d.medias.filter(m=>m.type==='image'||m.extension==='jpg'||m.extension==='png');
             const auds = d.medias.filter(m=>m.type==='audio'||m.extension==='mp3');
             if (vids.length>0) {
-                _normalPayload = {url:vids[vids.length-1].url, filename:`${prefix}_normal.mp4`, type:'video'};
-                _hdPayload = {url:vids[0].url, filename:`${prefix}_hd.mp4`, type:'video'};
-                addNormalVideoBtn('Download Video (75% Quality)');
-                addHDVideoBtn('Download HD Video (Original)');
+                const lo = vids[vids.length-1], hi = vids[0];
+                _normalPayload = {url:lo.url, filename:`${prefix}_video.mp4`, type:'video'};
+                addNormalVideoBtn('Download Video');
+                if (vids.length>1 && hi.url !== lo.url) {
+                    _hdPayload = {url:hi.url, filename:`${prefix}_hd.mp4`, type:'video'};
+                    addHDVideoBtn('Download HD Video');
+                }
             }
-            imgs.forEach((m,i) => { addNormalImgBtn(`Photo ${i+1} (75% Quality)`,m.url,i+1); addHDImgBtn(`Photo ${i+1} HD (Original)`,m.url,i+1); });
+            imgs.forEach((m,i) => addImageBtn(`Photo ${i+1}`, m.url, i+1));
             auds.forEach((m,i) => addAudioBtn(d.title||`Audio ${i+1}`,m.url,`${prefix}_audio_${i+1}.mp3`));
             if (vids.length>0||imgs.length>0||auds.length>0) { show('result'); return; }
         }
-    } catch(e) {}
-    setFault('Could not extract. Make sure the content is PUBLIC.');
+        setFault(`Could not extract this ${defaultTitle}. Make sure the content is PUBLIC.`);
+    } catch(e) {
+        setFault(`Could not reach the extraction service for ${defaultTitle}. Try again shortly.`);
+    }
 }
 
 // ── TERABOX ──
 async function extractTeraBox(url) {
+    setLoadingText('Resolving TeraBox file...');
     try {
         const r = await fetch(`https://terabox-worker.robinkumarshakya103.workers.dev/api?url=${encodeURIComponent(url)}`);
         const d = await r.json();
@@ -390,59 +524,49 @@ async function extractTeraBox(url) {
             setTitle(file.server_filename||file.filename||'TeraBox File');
             const dlUrl = file.dlink||file.download_link||'';
             if (dlUrl) {
-                _normalPayload = {url:dlUrl, filename:file.server_filename||'terabox_normal', type:'video'};
-                _hdPayload = {url:dlUrl, filename:file.server_filename||'terabox_hd', type:'video'};
-                addNormalVideoBtn('Download File (75% Quality)');
-                addHDVideoBtn('Download HD File (Original)');
+                _normalPayload = {url:dlUrl, filename:file.server_filename||'terabox_file', type:'video'};
+                addNormalVideoBtn('Download File');
             }
             show('result'); return;
         }
-    } catch(e) {}
-    setFault('TeraBox extraction failed. Check the link.');
+        setFault('TeraBox extraction failed. The link may be invalid or the file private.');
+    } catch(e) {
+        setFault('TeraBox service is unreachable right now. Try again in a moment.');
+    }
 }
 
 // ── BUTTON BUILDERS ──
 function addNormalVideoBtn(label) {
     const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:#00f2ea;border:3px solid #000;border-radius:16px;color:#000;font-size:15px;font-weight:700;box-shadow:4px 4px 0 #000;transition:all 0.1s ease;cursor:pointer;width:100%;font-family:Fredoka;margin-bottom:12px';
+    btn.className = 'dl-btn dl-normal-video';
     btn.innerHTML = '⬇️ '+label;
-    btn.onmouseenter = ()=>{btn.style.transform='translate(-2px,-2px)';btn.style.boxShadow='6px 6px 0 #000';};
-    btn.onmouseleave = ()=>{btn.style.transform='';btn.style.boxShadow='4px 4px 0 #000';};
     btn.onclick = doNormalDownload;
     document.getElementById('formats').appendChild(btn);
 }
 
 function addHDVideoBtn(label) {
     const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:linear-gradient(135deg,#ff007f,#ff9f1c);border:3px solid #000;border-radius:16px;color:#fff;font-size:15px;font-weight:700;box-shadow:4px 4px 0 #000;transition:all 0.1s ease;cursor:pointer;width:100%;font-family:Fredoka;margin-bottom:12px';
-    btn.innerHTML = `🎬 ${label} <span style="background:rgba(0,0,0,0.3);font-size:10px;padding:2px 8px;border-radius:8px;margin-left:4px">1 AD</span>`;
-    btn.onmouseenter = ()=>{btn.style.transform='translate(-2px,-2px)';btn.style.boxShadow='6px 6px 0 #000';};
-    btn.onmouseleave = ()=>{btn.style.transform='';btn.style.boxShadow='4px 4px 0 #000';};
-    btn.onclick = () => showAdModal(() => doHDDownload());
+    btn.className = 'dl-btn dl-hd-video';
+    btn.innerHTML = `🎬 ${label} <span class="ad-pill">1 AD</span>`;
+    btn.onclick = () => requireConsent(() => showAdModal(() => doHDDownload()));
     document.getElementById('formats').appendChild(btn);
 }
 
-function addNormalImgBtn(label, url, idx) {
+// Real distinct image qualities aren't available from the data sources, so
+// this is a single honest download button instead of a fake Normal/HD pair.
+function addImageBtn(label, url, idx) {
     const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:#00f2ea;border:3px solid #000;border-radius:16px;color:#000;font-size:14px;font-weight:700;box-shadow:4px 4px 0 #000;cursor:pointer;width:100%;font-family:Fredoka;margin-bottom:8px';
-    btn.innerHTML = '🖼️ '+label;
-    btn.onclick = () => compressAndDownload(url, `photo_${idx}_normal.jpg`, 0.75);
-    document.getElementById('formats').appendChild(btn);
-}
-
-function addHDImgBtn(label, url, idx) {
-    const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:linear-gradient(135deg,#ff007f,#ff9f1c);border:3px solid #000;border-radius:16px;color:#fff;font-size:14px;font-weight:700;box-shadow:4px 4px 0 #000;cursor:pointer;width:100%;font-family:Fredoka;margin-bottom:8px';
-    btn.innerHTML = `🖼️ ${label} <span style="background:rgba(0,0,0,0.3);font-size:10px;padding:2px 8px;border-radius:8px;margin-left:4px">1 AD</span>`;
-    btn.onclick = () => showAdModal(() => startDownload(url, `photo_${idx}_hd.jpg`));
+    btn.className = 'dl-btn dl-normal-img';
+    btn.innerHTML = '🖼️ Download '+label;
+    btn.onclick = () => runGuardedDownload(btn, url, `photo_${idx}.jpg`);
     document.getElementById('formats').appendChild(btn);
 }
 
 function addAudioBtn(label, url, filename) {
     const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:linear-gradient(135deg,#00ff88,#00d2ff);border:3px solid #000;border-radius:16px;color:#000;font-size:14px;font-weight:700;box-shadow:4px 4px 0 #000;cursor:pointer;width:100%;font-family:Fredoka;margin-bottom:8px';
-    btn.innerHTML = `🎵 ${label} <span style="background:rgba(0,0,0,0.2);font-size:10px;padding:2px 8px;border-radius:8px;margin-left:4px">1 AD</span>`;
-    btn.onclick = () => showAdModal(() => startDownload(url, filename));
+    btn.className = 'dl-btn dl-audio';
+    btn.innerHTML = `🎵 ${label} <span class="ad-pill" style="background:rgba(0,0,0,0.2)">1 AD</span>`;
+    btn.onclick = () => requireConsent(() => showAdModal(() => runGuardedDownload(btn, url, filename)));
     document.getElementById('formats').appendChild(btn);
 }
 
@@ -488,61 +612,54 @@ function doAdDownload() {
 // ── DOWNLOAD FUNCTIONS ──
 function doNormalDownload() {
     if (!_normalPayload) return;
-    compressVideoDownload(_normalPayload.url, _normalPayload.filename);
+    runGuardedDownload(document.activeElement, _normalPayload.url, _normalPayload.filename);
 }
 
 function doHDDownload() {
     if (!_hdPayload) return;
-    startDownload(_hdPayload.url, _hdPayload.filename);
+    runGuardedDownload(document.activeElement, _hdPayload.url, _hdPayload.filename);
 }
 
-function startDownload(url, filename) {
-    fetch(url, {mode:'cors'})
-        .then(r => { if(!r.ok) throw new Error('cors'); return r.blob(); })
-        .then(blob => {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(a.href);
-        })
-        .catch(() => {
-            const a = document.createElement('a');
-            a.href = url; a.download = filename; a.target = '_blank';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        });
+// Prevents double-clicks from starting two downloads at once, then proxies
+// the file through the backend so CORS-blocked CDNs (Instagram, Facebook,
+// Twitter, YouTube's googlevideo, etc.) work reliably.
+async function runGuardedDownload(triggerEl, url, filename) {
+    if (_downloadInFlight) return;
+    _downloadInFlight = true;
+    const btns = document.querySelectorAll('.dl-btn');
+    btns.forEach(b => b.disabled = true);
+    try {
+        await startDownload(url, filename);
+        bumpCounter();
+    } finally {
+        _downloadInFlight = false;
+        btns.forEach(b => b.disabled = false);
+    }
 }
 
-function compressVideoDownload(url, filename) {
-    // Video 75% quality = lower resolution URL directly
-    startDownload(url, filename);
-}
-
-function compressAndDownload(url, filename, quality) {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = function() {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        canvas.getContext('2d').drawImage(img, 0, 0);
-        canvas.toBlob(blob => {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            URL.revokeObjectURL(a.href);
-        }, 'image/jpeg', quality);
-    };
-    img.onerror = () => startDownload(url, filename);
-    img.src = url;
+async function startDownload(url, filename) {
+    const proxied = `${BACKEND}/api/proxy?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+    try {
+        const r = await fetch(proxied);
+        if (!r.ok) throw new Error('proxy-failed');
+        const blob = await r.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+    } catch (e) {
+        // Last-resort fallback: open the original link directly
+        const a = document.createElement('a');
+        a.href = url; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setFault('Direct download failed, opened the file in a new tab instead.');
+    }
 }
 
 // ── ENTER KEY ──
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('urlInput').addEventListener('keypress', e => {
-        if (e.key==='Enter') processExtraction();
-    });
+document.getElementById('urlInput').addEventListener('keypress', e => {
+    if (e.key==='Enter') processExtraction();
 });
 </script>
 </body>
