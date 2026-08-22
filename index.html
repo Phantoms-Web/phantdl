@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
     <meta name="monetag" content="3493d4c1a7771c14737125ccd3c5ee84">
+    <!-- ===== Monetag ad zones ===== -->
+    <!-- In-Page Push (banner-style, floats itself — doesn't need a container) -->
+    <script>(function(s){s.dataset.zone='11140054',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>    
+    <!-- Vignette Banner (centered overlay on page visit, has Close/Continue) -->
+    <script>(function(s){s.dataset.zone='11140055',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+    <!-- OnClick / Popunder (fires on click anywhere on the page, opens in a background tab) -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PhantDL — Premium Universal Media Downloader</title>
@@ -124,6 +130,7 @@
         .action-btn:disabled { opacity:0.5; cursor:not-allowed; transform:translateY(0) !important; }
 
         .ad-slot { width:100%; min-height:58px; background:linear-gradient(135deg,var(--input-bg),var(--container-bg)); border:2px solid var(--border-color); border-radius:16px; padding:12px 16px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:12px; position:relative; overflow:hidden; }
+        .ad-slot:empty { display:none; }
         .ad-slot-placeholder { font-size:11px; font-weight:700; letter-spacing:1px; color:var(--text-hint); display:flex; align-items:center; gap:6px; }
         .ad-slot-icon { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#ff9f1c,#ff007f); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
         .ad-slot-text { text-align:left; font-size:12px; color:var(--text-secondary); font-weight:600; line-height:1.4; }
@@ -313,7 +320,18 @@
         <button class="action-btn btn-clear-link" id="btnClear" onclick="executeClear()"><i class="fa-solid fa-trash-can"></i> Clear</button>
     </div>
 
-    <div class="ad-slot"><span class="ad-slot-placeholder"><i class="fa-solid fa-rectangle-ad"></i> Ad space</span></div>
+    <div class="ad-slot" id="adSlotTop">
+        <script>
+  atOptions = {
+    'key' : '29ba041608aa44ab578f94b0a0a96c4e',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/29ba041608aa44ab578f94b0a0a96c4e/invoke.js"></script>
+    </div>
 
     <button class="btn-generate" id="btn" onclick="processExtraction()">GENERATE DOWNLOAD</button>
 
@@ -339,8 +357,6 @@
         <button class="btn-trigger-footer" onclick="toggleOverlay('guideOverlay')"><i class="fa-solid fa-circle-question"></i> How to Use?</button>
         <button class="btn-trigger-footer" onclick="toggleOverlay('legalOverlay')"><i class="fa-solid fa-shield-halved"></i> Terms & License</button>
     </div>
-
-    <div class="ad-slot" style="margin-top:20px;margin-bottom:0"><span class="ad-slot-placeholder"><i class="fa-solid fa-rectangle-ad"></i> Ad space</span></div>
 </div>
 
 <!-- ===================== BOTTOM STATS SECTION ===================== -->
