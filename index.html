@@ -686,7 +686,7 @@ async function processExtraction() {
                 return r.json();
             })
         ]);
-        renderRealResult(result, p.key, p.name);
+        renderRealResult(result, p.key, p.name, url);
     } catch (err) {
         setFault(err.message === 'Failed to fetch'
             ? 'Server is waking up or unreachable. Please wait a few seconds and try again.'
@@ -726,7 +726,7 @@ function runLoadingSteps(platformKey, platformName) {
     });
 }
 
-function renderRealResult(result, platformKey, platformName) {
+function renderRealResult(result, platformKey, platformName, sourceUrl) {
     const thumb = document.getElementById('thumb');
     const skeleton = document.getElementById('thumbSkeleton');
     const formats = document.getElementById('formats');
@@ -753,39 +753,47 @@ function renderRealResult(result, platformKey, platformName) {
     }
 
     if (videoFormats.length) {
-        formats.appendChild(makeDlBtn('🎬 Video + Audio', 'dl-main', videoFormats[0], platformKey));
+        const label = videoFormats[0].needsMerge ? '🎬 Video + Audio' : '🎬 Video + Audio';
+        formats.appendChild(makeDlBtn(label, 'dl-main', videoFormats[0], platformKey, result.sourceUrl || sourceUrl));
     }
     if (audioFormats.length) {
         const label = videoFormats.length ? '🎵 Audio Only' : '🎵 Download Audio';
         const cls = videoFormats.length ? 'dl-secondary' : 'dl-main';
-        formats.appendChild(makeDlBtn(label, cls, audioFormats[0], platformKey));
+        formats.appendChild(makeDlBtn(label, cls, audioFormats[0], platformKey, result.sourceUrl || sourceUrl));
     }
     show('result');
 }
 
-function makeDlBtn(label, cls, formatObj, platformKey) {
+function makeDlBtn(label, cls, formatObj, platformKey, sourceUrl) {
     const btn = document.createElement('button');
     btn.className = 'dl-btn ' + cls;
     btn.innerHTML = `${label} <span class="ad-pill">1 AD</span>`;
-    btn.onclick = () => showAdModal(() => startDownload(formatObj, platformKey));
+    btn.onclick = () => showAdModal(() => startDownload(formatObj, platformKey, sourceUrl));
     return btn;
 }
 
 // Downloads always go through the backend's /api/proxy so CORS-blocked
 // CDNs (Instagram, Facebook, YouTube's googlevideo, etc.) work reliably.
 // Also fires a fire-and-forget counter update for the leaderboard/stats.
-async function startDownload(formatObj, platformKey) {
+async function startDownload(formatObj, platformKey, sourceUrl) {
     if (_downloadInFlight) return;
     _downloadInFlight = true;
     document.querySelectorAll('.dl-btn').forEach(b => b.disabled = true);
 
     const safeExt = formatObj.ext || (formatObj.type === 'audio' ? 'mp3' : 'mp4');
     const filename = `phantdl_${platformKey}_${(formatObj.quality || formatObj.type).replace(/\s+/g, '_')}.${safeExt}`;
-    const proxied = `${BACKEND}/api/proxy?url=${encodeURIComponent(formatObj.url)}&filename=${encodeURIComponent(filename)}`;
+
+    let proxied;
+    if (formatObj.needsMerge) {
+        showToast('Preparing your video — this can take up to a minute.', 'fa-clock');
+        proxied = `${BACKEND}/api/merge-download?url=${encodeURIComponent(sourceUrl)}&filename=${encodeURIComponent(filename)}`;
+    } else {
+        proxied = `${BACKEND}/api/proxy?url=${encodeURIComponent(formatObj.url)}&filename=${encodeURIComponent(filename)}`;
+    }
 
     try {
         const r = await fetch(proxied);
-        if (!r.ok) throw new Error('proxy failed');
+        if (!r.ok) throw new Error('download failed');
         const blob = await r.blob();
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -794,11 +802,15 @@ async function startDownload(formatObj, platformKey) {
         URL.revokeObjectURL(a.href);
         showToast('Download starting — original quality.', 'fa-circle-check');
     } catch (e) {
-        // last-resort fallback: open the original file link directly
-        const a = document.createElement('a');
-        a.href = formatObj.url; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        showToast('Direct download blocked — opened in a new tab instead.', 'fa-triangle-exclamation');
+        if (formatObj.needsMerge) {
+            showToast('Could not prepare the video. Please try again.', 'fa-triangle-exclamation');
+        } else {
+            // last-resort fallback: open the original file link directly
+            const a = document.createElement('a');
+            a.href = formatObj.url; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            showToast('Direct download blocked — opened in a new tab instead.', 'fa-triangle-exclamation');
+        }
     } finally {
         _downloadInFlight = false;
         document.querySelectorAll('.dl-btn').forEach(b => b.disabled = false);
