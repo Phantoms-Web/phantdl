@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="monetag" content="3493d4c1a7771c14737125ccd3c5ee84">
-    <!-- ===== Monetag ad zones ===== -->
-    <!-- In-Page Push (banner-style, floats itself — doesn't need a container) -->
-    <script>(function(s){s.dataset.zone='11140054',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>    
-    <!-- Vignette Banner (centered overlay on page visit, has Close/Continue) -->
-    <script>(function(s){s.dataset.zone='11140055',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
-    <!-- OnClick / Popunder (fires on click anywhere on the page, opens in a background tab) -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PhantDL — Premium Universal Media Downloader</title>
@@ -129,13 +122,6 @@
         .action-btn:active { transform:translateY(6px); box-shadow:0px 0px 0px transparent !important; }
         .action-btn:disabled { opacity:0.5; cursor:not-allowed; transform:translateY(0) !important; }
 
-        .ad-slot { width:100%; min-height:58px; background:linear-gradient(135deg,var(--input-bg),var(--container-bg)); border:2px solid var(--border-color); border-radius:16px; padding:12px 16px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:12px; position:relative; overflow:hidden; }
-        .ad-slot:empty { display:none; }
-        .ad-slot-placeholder { font-size:11px; font-weight:700; letter-spacing:1px; color:var(--text-hint); display:flex; align-items:center; gap:6px; }
-        .ad-slot-icon { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#ff9f1c,#ff007f); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
-        .ad-slot-text { text-align:left; font-size:12px; color:var(--text-secondary); font-weight:600; line-height:1.4; }
-        .ad-slot-text b { color:var(--text-primary); }
-
         .btn-generate { width:100%; padding:20px; background:linear-gradient(135deg,#ff007f,#ff2a93); border:3px solid #fff; border-radius:20px; color:white; font-size:18px; font-weight:700; cursor:pointer; letter-spacing:1px; box-shadow:0 8px 0 #99004c,0 15px 30px rgba(255,0,127,0.3); transition:all 0.1s ease; }
         .btn-generate:hover { transform:translateY(-2px); box-shadow:0 10px 0 #99004c,0 20px 30px rgba(255,0,127,0.4); }
         .btn-generate:active { transform:translateY(5px); box-shadow:0 2px 0 #99004c; }
@@ -181,7 +167,6 @@
         .dl-main { background:linear-gradient(135deg,#ff007f,#ff9f1c); color:#fff; animation:mainGlow 2s ease-in-out infinite alternate; }
         @keyframes mainGlow { from{box-shadow:4px 4px 0 #000,0 0 0px rgba(255,0,127,0)} to{box-shadow:4px 4px 0 #000,0 0 22px rgba(255,0,127,0.5)} }
         .dl-secondary { background:#00f2ea; color:#000; }
-        .ad-pill { background:rgba(0,0,0,0.3); font-size:10px; padding:3px 9px; border-radius:8px; margin-left:2px; font-weight:700; }
 
         /* ---- toast notification (replaces native alert()) ---- */
         .toast-stack { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:99999; display:flex; flex-direction:column; gap:10px; align-items:center; width:100%; padding:0 20px; pointer-events:none; }
@@ -320,19 +305,6 @@
         <button class="action-btn btn-clear-link" id="btnClear" onclick="executeClear()"><i class="fa-solid fa-trash-can"></i> Clear</button>
     </div>
 
-    <div class="ad-slot" id="adSlotTop">
-        <script>
-  atOptions = {
-    'key' : '29ba041608aa44ab578f94b0a0a96c4e',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highrevenueformat.com/29ba041608aa44ab578f94b0a0a96c4e/invoke.js"></script>
-    </div>
-
     <button class="btn-generate" id="btn" onclick="processExtraction()">GENERATE DOWNLOAD</button>
 
     <div class="loading" id="loading">
@@ -400,7 +372,7 @@
             <div class="guide-node-step"><h4><span>01.</span> Copy Media URL</h4><div class="guide-node-desc">Go to TikTok, Instagram, YouTube or any platform and copy the sharing link.</div></div>
             <div class="guide-node-step"><h4><span>02.</span> Paste Link</h4><div class="guide-node-desc">Tap "Paste Link" — the link appears with a random animation.</div></div>
             <div class="guide-node-step"><h4><span>03.</span> Generate</h4><div class="guide-node-desc">Press "GENERATE DOWNLOAD" to extract the media.</div></div>
-            <div class="guide-node-step"><h4><span>04.</span> Download</h4><div class="guide-node-desc">Every download is original quality. Watch one short ad to unlock the file — video links let you choose audio-only or video-with-audio.</div></div>
+            <div class="guide-node-step"><h4><span>04.</span> Download</h4><div class="guide-node-desc">Every download is original quality — video links let you choose audio-only or video-with-audio.</div></div>
         </div>
     </div>
 </div>
@@ -421,10 +393,9 @@
 
 <script>
 /* =========================================================================
-   PhantDL front-end logic — now wired to the live Render backend.
+   PhantDL front-end logic — wired to the live Render backend.
    ========================================================================= */
 
-// ⚠️ Change this if the backend is ever redeployed to a different URL
 const BACKEND = 'https://phantdl-backend.onrender.com';
 let _downloadInFlight = false;
 
@@ -543,8 +514,6 @@ async function loadStats() {
     }
 }
 
-// wakes the free-tier Render instance up (it sleeps after inactivity) and
-// records this page load as one visit — both fire-and-forget, no UI impact
 function wakeBackend() { fetch(`${BACKEND}/ping`).catch(() => {}); }
 function recordVisit() { fetch(`${BACKEND}/api/visit`, { method: 'POST' }).catch(() => {}); }
 
@@ -655,7 +624,7 @@ function setFault(m) {
     const el = document.getElementById('error');
     clearTimeout(_errorTimer);
     el.classList.remove('auto-hide');
-    void el.offsetWidth; // restart animation if re-triggered while still visible
+    void el.offsetWidth;
     el.textContent = '⚠️ ' + m;
     show('error');
     el.classList.add('auto-hide');
@@ -769,8 +738,7 @@ function renderRealResult(result, platformKey, platformName, sourceUrl) {
     }
 
     if (videoFormats.length) {
-        const label = videoFormats[0].needsMerge ? '🎬 Video + Audio' : '🎬 Video + Audio';
-        formats.appendChild(makeDlBtn(label, 'dl-main', videoFormats[0], platformKey, result.sourceUrl || sourceUrl));
+        formats.appendChild(makeDlBtn('🎬 Video + Audio', 'dl-main', videoFormats[0], platformKey, result.sourceUrl || sourceUrl));
     }
     if (audioFormats.length) {
         const label = videoFormats.length ? '🎵 Audio Only' : '🎵 Download Audio';
@@ -783,14 +751,13 @@ function renderRealResult(result, platformKey, platformName, sourceUrl) {
 function makeDlBtn(label, cls, formatObj, platformKey, sourceUrl) {
     const btn = document.createElement('button');
     btn.className = 'dl-btn ' + cls;
-    btn.innerHTML = `${label} <span class="ad-pill">1 AD</span>`;
-    btn.onclick = () => showAdModal(() => startDownload(formatObj, platformKey, sourceUrl));
+    btn.innerHTML = label;
+    btn.onclick = () => startDownload(formatObj, platformKey, sourceUrl);
     return btn;
 }
 
 // Downloads always go through the backend's /api/proxy so CORS-blocked
 // CDNs (Instagram, Facebook, YouTube's googlevideo, etc.) work reliably.
-// Also fires a fire-and-forget counter update for the leaderboard/stats.
 async function startDownload(formatObj, platformKey, sourceUrl) {
     if (_downloadInFlight) return;
     _downloadInFlight = true;
@@ -807,6 +774,7 @@ async function startDownload(formatObj, platformKey, sourceUrl) {
         proxied = `${BACKEND}/api/proxy?url=${encodeURIComponent(formatObj.url)}&filename=${encodeURIComponent(filename)}`;
     }
 
+    let succeeded = false;
     try {
         const r = await fetch(proxied);
         if (!r.ok) throw new Error('download failed');
@@ -817,11 +785,11 @@ async function startDownload(formatObj, platformKey, sourceUrl) {
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         URL.revokeObjectURL(a.href);
         showToast('Download starting — original quality.', 'fa-circle-check');
+        succeeded = true;
     } catch (e) {
         if (formatObj.needsMerge) {
             showToast('Could not prepare the video. Please try again.', 'fa-triangle-exclamation');
         } else {
-            // last-resort fallback: open the original file link directly
             const a = document.createElement('a');
             a.href = formatObj.url; a.download = filename; a.target = '_blank'; a.rel = 'noopener';
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
@@ -832,70 +800,23 @@ async function startDownload(formatObj, platformKey, sourceUrl) {
         document.querySelectorAll('.dl-btn').forEach(b => b.disabled = false);
     }
 
-    fetch(`${BACKEND}/api/counter/increment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ platform: platformKey, contentType: formatObj.type })
-    }).catch(() => {});
+    // only count downloads that actually succeeded — a failed attempt
+    // should never inflate the leaderboard/stats numbers
+    if (succeeded) {
+        fetch(`${BACKEND}/api/counter/increment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ platform: platformKey, contentType: formatObj.type })
+        }).catch(() => {});
+    }
 }
-
-// ---------- ad-unlock modal (required before every download) ----------
-function injectAdModal() {
-    const m = document.createElement('div');
-    m.id = 'adModalBg';
-    m.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px)';
-    m.innerHTML = `<div style="background:var(--container-bg);border:4px solid #ff9f1c;border-radius:28px;width:90%;max-width:380px;padding:28px 22px;text-align:center;box-shadow:8px 8px 0 #000">
-        <div style="font-size:40px;margin-bottom:10px">🎬</div>
-        <div style="font-size:20px;font-weight:700;color:#ff9f1c;margin-bottom:8px;font-family:Fredoka">UNLOCK DOWNLOAD</div>
-        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;line-height:1.6">Watch a short ad to unlock<br><b style="color:var(--text-primary)">100% Original Quality</b></div>
-        <div style="height:6px;background:var(--border-color);border-radius:10px;overflow:hidden;margin-bottom:8px;border:2px solid #000">
-            <div id="adFill" style="height:100%;width:0%;background:linear-gradient(90deg,#ff007f,#ff9f1c);transition:width 0.1s linear;border-radius:10px"></div>
-        </div>
-        <div id="adCount" style="font-size:12px;color:#ff9f1c;font-weight:700;margin-bottom:18px;letter-spacing:1px">WAIT 5 SECONDS...</div>
-        <div style="display:flex;gap:10px">
-            <button onclick="closeAd()" style="flex:1;padding:13px;background:#ff595e;border:3px solid #000;border-radius:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 #000;font-family:Fredoka">✕ Cancel</button>
-            <button id="adDlBtn" onclick="doAdDownload()" style="flex:2;padding:13px;background:#ff9f1c;border:3px solid #000;border-radius:14px;color:#000;font-size:14px;font-weight:700;cursor:not-allowed;box-shadow:3px 3px 0 #000;opacity:0.4;font-family:Fredoka;transition:opacity 0.3s">⬇ Download</button>
-        </div>
-    </div>`;
-    document.body.appendChild(m);
-}
-let _adTimer = null, _pendingDownload = null;
-function showAdModal(callback) {
-    _pendingDownload = callback;
-    const m = document.getElementById('adModalBg');
-    m.style.display = 'flex';
-    document.getElementById('adDlBtn').style.opacity = '0.4';
-    document.getElementById('adDlBtn').style.cursor = 'not-allowed';
-    document.getElementById('adFill').style.width = '0%';
-    document.getElementById('adCount').textContent = 'WAIT 5 SECONDS...';
-    let t = 0;
-    clearInterval(_adTimer);
-    _adTimer = setInterval(() => {
-        t += 100;
-        document.getElementById('adFill').style.width = (t/5000*100)+'%';
-        const rem = Math.ceil((5000-t)/1000);
-        if (t < 5000) {
-            document.getElementById('adCount').textContent = `WAIT ${rem} SECOND${rem!==1?'S':''}...`;
-        } else {
-            clearInterval(_adTimer);
-            document.getElementById('adDlBtn').style.opacity = '1';
-            document.getElementById('adDlBtn').style.cursor = 'pointer';
-            document.getElementById('adCount').textContent = '✅ READY TO DOWNLOAD!';
-        }
-    }, 100);
-}
-function closeAd() { document.getElementById('adModalBg').style.display = 'none'; clearInterval(_adTimer); _pendingDownload = null; }
-function doAdDownload() { if (!_pendingDownload) return; const fn = _pendingDownload; closeAd(); fn(); }
 
 function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
 document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     document.querySelectorAll('.guide-overlay.active').forEach(o => o.classList.remove('active'));
-    const adModal = document.getElementById('adModalBg');
-    if (adModal && adModal.style.display === 'flex') closeAd();
 });
 
-injectAdModal();
 document.getElementById('urlInput').addEventListener('keypress', e => { if (e.key==='Enter') processExtraction(); });
 </script>
 </body>
